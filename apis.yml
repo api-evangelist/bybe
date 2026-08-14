@@ -1,34 +1,46 @@
 aid: bybe
 accessModel:
-  pricing: unknown
-  onboarding: unknown
+  pricing: usage-based
+  onboarding: sales-assisted
   trial: false
   try_now: false
-  public: false
-  label: Unknown
-  confidence: low
-  source: []
-  generated: '2026-07-22'
-  method: derived
+  public: true
+  label: Public docs, gated credentials
+  confidence: high
+  source:
+  - https://api.bybe.io/v1/swagger.yaml
+  - https://bybe.com/pricing
+  - https://developer.bybe.io/
+  generated: '2026-08-13'
+  method: searched
+  note: >-
+    The OpenAPI specification and Swagger UI are public and unauthenticated; API credentials are
+    issued from the BYBE developer page, which requires a BYBE account. Pricing is published:
+    25% + 25 cents per successful transaction, capped at $1.75, free for retailers.
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/bybe.png
 name: BYBE
-description: 'BYBE, Inc. is a promotion platform for the beer, wine, and spirits
-  industry, connecting alcohol beverage brands, retailers, and consumers through
-  digital rebates and promotional offers. Backed by Techstars, BYBE operates in the
-  regulated alcohol marketing space where compliance and channel constraints shape
-  how promotions reach shoppers. As of this profile the company publishes no public
-  developer portal, API documentation, or machine-readable specification; this
-  record captures its identity plus a live domain-security probe.'
+description: 'BYBE, Inc. is a promotion platform for the beer, wine, and spirits industry,
+  connecting alcohol beverage brands, retailers, and consumers through digital cash-back rebates.
+  Brands fund offers in the BYBE dashboard; retailers embed those offers in their own apps, sites
+  and loyalty programs, and BYBE handles US state-by-state alcohol promotion compliance, redemption
+  validation, clearing and consumer payout. BYBE publishes a real OpenAPI 3.0.1 contract for its
+  Retail API at api.bybe.io covering manufacturers, products, offers, clips, consumers, stores and
+  redemption disbursements, with HTTP Basic authentication and a documented SFTP CSV batch
+  alternative for retailers that cannot call the API in real time. Backed by Techstars and Rev1
+  Ventures, BYBE was acquired by Swiftly in March 2024 and continues to operate under its own brand
+  and domains.'
 url: https://raw.githubusercontent.com/api-evangelist/bybe/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
 x-backed-by:
 - techstars
-x-tier: stub
-x-tier-reason: portfolio-lead
+x-acquired-by: swiftly
+x-acquired-date: '2024-03-06'
+x-tier: enriched
+x-tier-reason: published-openapi-harvested
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-18'
+modified: '2026-08-13'
 tags:
 - Company
 - Alcohol
@@ -38,19 +50,107 @@ tags:
 - Marketing
 - Retail
 - CPG
-apis: []
+- Loyalty
+- Payments
+- Disbursements
+- Compliance
+apis:
+- aid: bybe:bybe-api
+  name: BYBE API
+  description: >-
+    The BYBE Retail API, version 1. A REST/JSON API over BYBE's records of manufacturers, rebate
+    offers and products, plus the write surface that clips offers for consumers, validates
+    redemptions against purchases, and disburses consumer payouts. 16 operations across 7 tags,
+    authenticated with HTTP Basic (API key as username, API secret as password). US only - the
+    state filter on offers and stores is how BYBE's state-by-state alcohol compliance boundary is
+    expressed in the contract.
+  humanURL: https://docs.bybe.io/
+  baseURL: https://api.bybe.io
+  tags:
+  - Rebates
+  - Promotions
+  - Offers
+  - Redemptions
+  - Disbursements
+  - Alcohol
+  - Retail
+  properties:
+  - type: OpenAPI
+    url: openapi/bybe-api-openapi-original.yml
+  - type: Overlay
+    url: overlays/bybe-api-overlay.yaml
+  - type: APIReference
+    url: https://docs.bybe.io/
+  - type: Documentation
+    url: https://bybe.com/developers
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
-- type: DomainSecurity
-  url: security/bybe-domain-security.yml
 - type: Website
   url: https://bybe.com/
+- type: DeveloperPortal
+  url: https://developer.bybe.io/
+- type: Documentation
+  url: https://bybe.com/developers
+- type: APIReference
+  url: https://docs.bybe.io/
+- type: GettingStarted
+  url: https://bybe.com/developers
+- type: Login
+  url: https://dashboard.bybe.io/users/sign_in
+- type: Pricing
+  url: https://bybe.com/pricing
+- type: TermsOfService
+  url: https://bybe.com/terms-and-conditions.html
+- type: PrivacyPolicy
+  url: https://bybe.com/privacy-policy.html
+- type: Support
+  url: mailto:support@bybe.com
+- type: GitHubOrganization
+  url: https://github.com/BYBE-INC
+- type: StatusPage
+  url: https://status.bybe.com/
+- type: Authentication
+  url: authentication/bybe-authentication.yml
+- type: AgenticAccess
+  url: agentic-access/bybe-agentic-access.yml
+- type: DomainSecurity
+  url: security/bybe-domain-security.yml
+- type: Conventions
+  url: conventions/bybe-conventions.yml
+- type: Idempotency
+  url: conventions/bybe-conventions.yml
+- type: ErrorCatalog
+  url: errors/bybe-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/bybe-lifecycle.yml
+- type: Conformance
+  url: conformance/bybe-conformance.yml
+- type: DataModel
+  url: data-model/bybe-data-model.yml
+- type: Packages
+  url: packages/bybe-packages.yml
+- type: Plans
+  url: plans/bybe-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/bybe-rate-limits.yml
+- type: Sandbox
+  url: sandbox/bybe-sandbox.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: LLMsTxt
+  url: llms/bybe-llms.txt
 x-enrichment:
-  date: '2026-07-19'
-  status: backfilled
+  date: '2026-08-13'
+  status: enriched
+  artifacts_added: 20
   pass: local-v1
-  note: backfilled from .gitignore signal + verified work evidence
+  note: >-
+    Round 2 contract discovery overturned round 1's "no developer portal, no API documentation, no
+    machine-readable specification" finding. The BYBE API v1 OpenAPI 3.0.1 (16 operations) was live
+    the whole time at https://api.bybe.io/v1/swagger.yaml, reachable from docs.bybe.io, which is
+    linked from bybe.com's own JavaScript bundle. bybe.com is a React SPA whose catch-all answers
+    HTTP 200 with index.html for every path, which is what made the first pass read as an absence.
