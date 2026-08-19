@@ -1,0 +1,88 @@
+generated: '2026-08-13'
+method: searched
+source: https://api.bybe.io/v1/swagger.yaml
+docs: https://bybe.com/developers
+
+versioning:
+  scheme: uri-path
+  current: v1
+  spec_version_string: v1
+  spec_url: https://api.bybe.io/v1/swagger.yaml
+  next:
+    version: v2-alpha1
+    spec_url: https://api.bybe.io/v2/swagger.yaml
+    http_status: 200
+    paths_declared: 0
+    statement: >-
+      "BYBE API version 2 is under development, **format stability is NOT yet guaranteed!**"
+      (info.description, verbatim).
+    servers:
+      - http://api.bybe.localhost:3000
+      - https://api.bybestaging.io
+    note: >-
+      A real, publicly fetchable document that announces the next major version, but it declares no
+      paths and its only non-local server is the staging host. It is deliberately NOT saved into
+      openapi/ - it describes no operations, so treating it as a second contract would overstate
+      BYBE's published surface. Recorded here as the lifecycle signal it actually is.
+
+deprecation:
+  policy_url: null
+  sunset_header: false
+  deprecation_header: false
+  deprecated_operations: []
+  note: >-
+    No deprecation or sunset policy was found on bybe.com, on the developers page, or in either
+    specification. No operation in the v1 specification carries `deprecated: true`. RFC 8594
+    Sunset/Deprecation headers were not present on the live response from
+    https://api.bybe.io/v1/offers.
+
+sla:
+  url: null
+  uptime_target: null
+  published_figure: '99.8%'
+  published_figure_context: >-
+    "99.8%" appears as a marketing statistic on bybe.com. It is not presented as a contractual
+    uptime commitment and no SLA document was found, so it is recorded as a claim, not a target.
+
+status_page:
+  url: https://status.bybe.com/
+  http_status: 200
+  title: BYBE Status
+  heading: BYBE Platform Service Status
+  operator_label: Swiftly BYBE Status Monitoring
+  support_contact: support@bybe.com
+  linked_surfaces:
+    - {name: BYBE.com, url: https://bybe.com}
+    - {name: BYBE Dashboard, url: https://dashboard.bybe.io}
+    - {name: BYBE Developer Portal, url: https://developer.bybe.io}
+    - {name: API Docs, url: https://docs.bybestaging.io}
+  note: >-
+    Self-hosted status dashboard (Vue application, served behind Microsoft Azure Application
+    Gateway). Component-level detail renders client-side, so the monitored component list could not
+    be read without executing JavaScript; the headings, buttons and support address above are read
+    verbatim from the page's server-rendered window.config block.
+  method: probed
+
+changelog:
+  url: null
+  note: >-
+    No dated changelog or release-notes page was found on bybe.com, docs.bybe.io, or
+    developer.bybe.io. The only version-change signal BYBE publishes is the v2-alpha1 specification
+    above.
+
+ownership:
+  acquired_by: Swiftly
+  announced: '2024-03-06'
+  evidence:
+    - https://www.swiftly.com/news/swiftly-acquires-bybe-powering-the-future-of-alcohol-promotions-in-retail
+    - "https://status.bybe.com/ window.config.header = 'Swiftly BYBE Status Monitoring'"
+  note: >-
+    BYBE continues to operate under its own brand and domains after the acquisition - bybe.com,
+    api.bybe.io and status.bybe.com are all live and BYBE-branded, and the API specification is
+    titled "BYBE API". This is recorded for provenance, not as a domain-attribution exception.
+
+evidence:
+  - {url: 'https://api.bybe.io/v1/swagger.yaml', status: 200}
+  - {url: 'https://api.bybe.io/v2/swagger.yaml', status: 200}
+  - {url: 'https://status.bybe.com/', status: 200}
+  - {url: 'https://api.bybe.io/v1/offers', status: 401}

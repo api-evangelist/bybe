@@ -1,0 +1,174 @@
+generated: '2026-08-13'
+method: derived
+source: openapi/bybe-api-openapi-original.yml
+docs: https://bybe.com/developers
+note: >-
+  Cross-cutting request/response semantics for the BYBE API v1, derived from the harvested
+  specification at https://api.bybe.io/v1/swagger.yaml and from a live unauthenticated probe of
+  https://api.bybe.io/v1/offers (HTTP 401). Nothing here is inferred from a host we do not
+  attribute to BYBE.
+
+authentication:
+  style: http-basic
+  header: Authorization
+  encoding: base64(api_key:api_secret)
+  description: >-
+    HTTP Basic. Username is the API key (token), password is the API secret. Both are issued from
+    the BYBE developer page at https://developer.bybe.io/, which is behind a BYBE account login.
+  applied: per-operation
+  note: >-
+    Every one of the 16 operations declares security: [{basic_auth: []}] individually; the
+    specification declares no top-level security block.
+  artifact: authentication/bybe-authentication.yml
+
+idempotency:
+  supported: true
+  mechanism: natural-key
+  header: null
+  key_field: retailer_identifier
+  scope: per-resource (clip, consumer, purchase, redemption disbursement)
+  retention: unbounded (the identifier is the permanent retailer-side key for the record)
+  behavior:
+    - operation: POST /v1/clips
+      duplicate_same_pair: >-
+        HTTP 303 with a JSON body carrying a `location` field pointing at the existing clip
+        (example: {"location": "/v1/clips/980190962"}) when a clip already exists for the same
+        offer and consumer.
+      conflicting_key: >-
+        HTTP 409 when a DIFFERENT clip already exists with this retailer_identifier
+        ("has already been taken").
+    - operation: POST /v1/redemption_disbursements
+      note: >-
+        redemption_disbursement.retailer_identifier is required and documented as the caller's
+        unique ID; each purchase carries its own retailer_identifier described as "your internal
+        purchase ID or transaction ID".
+  evidence:
+    - openapi/bybe-api-openapi-original.yml#/paths/~1v1~1clips/post/responses/303
+    - openapi/bybe-api-openapi-original.yml#/paths/~1v1~1clips/post/responses/409
+    - https://bybe.com/developers
+  caveat: >-
+    BYBE publishes NO Idempotency-Key request header. Safe retry is achieved by the caller
+    supplying its own stable retailer_identifier, which the API treats as a unique natural key and
+    on collision points the caller at the existing record rather than creating a duplicate. The
+    BYBE developers page states the same rule for the SFTP path: "transaction_id ... must be unique
+    for all retailer transactions."
+
+pagination:
+  style: page-number
+  parameters:
+    - name: page
+      in: query
+      type: integer
+      description: Page of results to return
+    - name: limit
+      in: query
+      type: integer
+      description: Number of records per page
+  applies_to:
+    - GET /v1/clips
+    - GET /v1/manufacturers
+    - GET /v1/products
+    - GET /v1/redemption_disbursements
+    - GET /v1/stores/{id}
+  response_fields: null
+  note: >-
+    The specification documents the request parameters but declares no pagination envelope,
+    Link header, or total-count field in any response example. A caller cannot tell from the
+    contract how many pages exist.
+
+filtering:
+  parameters:
+    - {name: offer_id, on: GET /v1/clips}
+    - {name: consumer_retailer_identifier, on: "GET /v1/clips, GET /v1/offers, GET /v1/redemption_disbursements"}
+    - {name: state, on: "GET /v1/offers, GET /v1/stores", note: two-letter US state enum (state_string_enum)}
+    - {name: product_type_id, on: GET /v1/products}
+    - {name: product_subtype_id, on: GET /v1/products}
+    - {name: product_package_type_id, on: GET /v1/products}
+    - {name: manufacturer_id, on: GET /v1/products}
+
+field_expansion:
+  supported: true
+  style: boolean-query-flags
+  parameters:
+    - {name: show_stores, on: GET /v1/offers, default: true, description: When false, stores associated with offers are omitted}
+    - {name: show_clips, on: GET /v1/offers, requires: consumer_retailer_identifier}
+    - {name: show_details, on: GET /v1/offers, default: false, description: When true, includes additional store detail}
+    - {name: prelive, on: GET /v1/offers, default: false, description: When true, includes offers not yet live}
+  note: No sparse-fieldset or generic `expand` parameter; expansion is a fixed set of booleans.
+
+request_tracing:
+  header: x-request-id
+  observed: true
+  evidence: >-
+    Live response headers from https://api.bybe.io/v1/offers (2026-08-13) include
+    `x-request-id: 8cad2585-0784-44ba-86a5-e88c00a5abbc` and `x-runtime: 0.003499`. These are
+    Rails/Rack defaults and are not documented by BYBE, but they are emitted on every response.
+  documented: false
+
+versioning:
+  scheme: uri-path
+  current: v1
+  next: v2-alpha1
+  detail: >-
+    Version is the first path segment (/v1/...). A v2 specification is published at
+    https://api.bybe.io/v2/swagger.yaml but declares zero paths and states "BYBE API version 2 is
+    under development, format stability is NOT yet guaranteed!".
+  artifact: lifecycle/bybe-lifecycle.yml
+
+error_envelope:
+  format: rails-nested-errors
+  rfc9457: false
+  shape: '{"<resource>": {"errors": {"<field>": ["<message>", ...]}}}'
+  examples:
+    - '{"clip": {"errors": {"retailer_identifier": ["has already been taken"]}}}'
+    - '{"redemption_disbursement": {"errors": {"unknown_upcs": ["Unknown upcs 929352935829352935"]}}}'
+  media_type: application/json
+  note: >-
+    Errors are keyed by the resource name and carry an ActiveModel-style errors map of
+    field -> array of messages. No `type`/`title`/`status`/`detail` problem-details members, no
+    application/problem+json media type, and no machine-readable error code.
+  artifact: errors/bybe-problem-types.yml
+
+rate_limiting:
+  documented: false
+  response_headers: []
+  note: >-
+    No X-RateLimit-*, RateLimit-* or Retry-After header was present on the live 401 response from
+    https://api.bybe.io/v1/offers on 2026-08-13, and the specification documents no 429 response on
+    any operation.
+  artifact: rate-limits/bybe-rate-limits.yml
+
+transport:
+  https_only: true
+  hsts: true
+  hsts_max_age: 31536000
+  evidence: >-
+    strict-transport-security: max-age=31536000; includeSubDomains observed on
+    https://api.bybe.io/v1/offers, 2026-08-13.
+
+alternative_channel:
+  name: SFTP batch upload
+  documented: https://bybe.com/developers#sftp
+  purpose: Post-purchase transaction upload for retailers unable to call the real-time API.
+  format: CSV, one row per line item
+  auth: SSH key provided to BYBE (preferred) or username/password provided by BYBE
+  fields:
+    - purchase_date
+    - purchased_product_id
+    - consumer_identifier
+    - consumer_email
+    - store_identifier
+    - transaction_id
+    - quantity
+    - price
+    - product_name
+  note: >-
+    Recorded because it is the documented fallback for the same redemption flow the REST API
+    serves; the field names above are BYBE's own, from its developers page.
+
+cross_links:
+  errors: errors/bybe-problem-types.yml
+  lifecycle: lifecycle/bybe-lifecycle.yml
+  authentication: authentication/bybe-authentication.yml
+  rate_limits: rate-limits/bybe-rate-limits.yml
+  data_model: data-model/bybe-data-model.yml

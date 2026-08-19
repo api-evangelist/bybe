@@ -1,0 +1,68 @@
+generated: '2026-08-13'
+method: searched
+source: https://bybe.com/pricing
+plan_count: 2
+currency: USD
+model: pay-as-you-go
+headline: >-
+  "Straight-forward, transparent pricing. Access BYBE's platform in distribution with simple
+  pay-as-you-go pricing." (bybe.com/pricing, verbatim)
+note: >-
+  BYBE prices per successful transaction, not per API call, and there are no named subscription
+  tiers. The two entries below are the two sides of BYBE's marketplace as BYBE itself presents
+  them: brands/suppliers pay, retailers do not. Figures are read verbatim from the pricing page;
+  the percentage component is rendered as an image on that page (/images/25percent.png, alt text
+  "25%") with the "+25 cents per successful transaction" text alongside it.
+
+plans:
+  - name: Brand / supplier - pay-as-you-go
+    audience: alcohol beverage brands and suppliers funding promotions
+    price: 25% + $0.25
+    price_detail: >-
+      25% plus 25 cents per successful transaction, capped at $1.75 per transaction.
+    unit: successful transaction
+    billing_period: usage-based (no subscription term published)
+    cap: $1.75 per transaction
+    quota: null
+    overage: null
+    setup_fee: 0
+    included:
+      - Access to BYBE's dashboard
+      - Easily submit and manage offers
+      - Real-time data analysis
+      - Clearing and reconciliation
+      - Fraud prevention
+      - Historical redemption information
+      - Offer recaps delivered at no cost
+    excluded_fees:
+      - setup fees
+      - impression fees
+      - '"clip" fees'
+    quote: 'No setup, impression or "clip" fees'
+  - name: Retailer - free
+    audience: retailers embedding BYBE offers in their apps, sites and loyalty programs
+    price: 0
+    price_detail: >-
+      "Free access for retailers - Include supplier-funded cash back beer, wine and spirit
+      promotions inside retail and ecommerce apps/sites." Promotions are supplier-funded, so the
+      retailer carries no cost or margin impact.
+    unit: null
+    billing_period: null
+    quota: null
+    overage: null
+    included:
+      - Retail API access (state-by-state compliance, embedded user experience, BYBE network)
+      - SFTP integration as an alternative to the real-time API
+      - Consumer support handled by BYBE's Client Success team
+      - Own your customer data
+
+api_access:
+  metered: false
+  note: >-
+    No API-specific pricing, call quota, or per-request charge is published. API access is bundled
+    into the commercial relationship; credentials are issued from https://developer.bybe.io/ after
+    a BYBE account exists. There is no self-serve signup for the API.
+
+evidence:
+  - {url: 'https://bybe.com/pricing', status: 200}
+  - {url: 'https://bybe.com/developers', status: 200}

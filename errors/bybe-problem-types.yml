@@ -1,0 +1,92 @@
+generated: '2026-08-13'
+method: derived
+source: openapi/bybe-api-openapi-original.yml
+format: rails-nested-errors
+rfc9457: false
+envelope: '{"<resource>": {"errors": {"<field>": ["<message>", ...]}}}'
+media_type: application/json
+note: >-
+  Derived from every 3xx/4xx/5xx response declared in the BYBE API v1 specification
+  (https://api.bybe.io/v1/swagger.yaml). BYBE publishes no separate error-code reference page, so
+  every entry below is grounded in the specification's own response description and example body.
+  The API does NOT use RFC 9457 problem+json; it returns an ActiveModel-style errors map keyed by
+  the resource name. There is no machine-readable error code, so an agent must match on the field
+  name and message string.
+
+coverage:
+  operations_total: 16
+  operations_declaring_an_error_response: 2
+  gap: >-
+    14 of 16 operations declare only their success response. Authentication failures (observed live
+    as HTTP 401 on GET /v1/offers), authorization failures, not-found on the eight {id} lookups, and
+    rate limiting are all undocumented in the contract.
+
+problems:
+  - status: 303
+    resource: clip
+    title: Duplicate clip for the same offer and consumer
+    detail: >-
+      A clip already exists for the same offer and consumer. The response carries a `location`
+      member pointing at the existing clip so the caller can follow it instead of retrying.
+    fields:
+      - retailer_identifier: ["has already been taken"]
+      - duplicate_clip: ["Duplicate clips are not permitted"]
+    example: '{"location": "/v1/clips/980190962", "clip": {"errors": {"retailer_identifier": ["has already been taken"], "duplicate_clip": ["Duplicate clips are not permitted"]}}}'
+    remediation: >-
+      Treat as success-equivalent. Follow the `location` value to GET the existing clip. This is the
+      idempotent-retry path, not a failure.
+    source_operation: openapi/bybe-api-openapi-original.yml#/paths/~1v1~1clips/post
+  - status: 409
+    resource: clip
+    title: retailer_identifier already taken by a different clip
+    detail: A different clip already exists with this retailer_identifier.
+    fields:
+      - retailer_identifier: ["has already been taken"]
+    example: '{"clip": {"errors": {"retailer_identifier": ["has already been taken"]}}}'
+    remediation: >-
+      Do not retry with the same key. The caller-supplied retailer_identifier must be unique per
+      clip; regenerate it from a stable retailer-side identifier that has not been used.
+    source_operation: openapi/bybe-api-openapi-original.yml#/paths/~1v1~1clips/post
+  - status: 422
+    resource: clip
+    title: Required field missing
+    detail: A required field is missing on the clip request body.
+    fields:
+      - retailer_identifier: ["can't be blank"]
+    example: '{"clip": {"errors": {"retailer_identifier": ["can''t be blank"]}}}'
+    remediation: Supply clip.offer_id and clip.retailer_identifier, both required by the schema.
+    source_operation: openapi/bybe-api-openapi-original.yml#/paths/~1v1~1clips/post
+  - status: 422
+    resource: redemption_disbursement
+    title: Unknown UPCs
+    detail: >-
+      One or more product UPCs in the purchase line items are not known to BYBE. Returned when the
+      `ignore_unknown_upcs` query parameter is absent or false.
+    fields:
+      - unknown_upcs: ["Unknown upcs 929352935829352935"]
+    remediation: >-
+      Either register the product with BYBE, or resubmit with ignore_unknown_upcs=true to have the
+      unrecognised line items skipped rather than rejecting the whole disbursement.
+    source_operation: openapi/bybe-api-openapi-original.yml#/paths/~1v1~1redemption_disbursements/post
+  - status: 422
+    resource: redemption_disbursement
+    title: Unknown retailer identifiers
+    detail: >-
+      One or more retailer identifiers in the request are not known to BYBE. Per the specification
+      this ALWAYS returns 422; it cannot be suppressed by ignore_unknown_upcs.
+    fields:
+      - unknown_retailer_identifiers: ["Unknown retailer identifiers ..."]
+    remediation: >-
+      Confirm the store and consumer retailer_identifier values were previously registered with
+      BYBE (stores must match the store list supplied to BYBE; consumers must exist via the
+      Consumers or Clips API).
+    source_operation: openapi/bybe-api-openapi-original.yml#/paths/~1v1~1redemption_disbursements/post
+
+observed_but_undocumented:
+  - status: 401
+    title: Missing or invalid credentials
+    detail: >-
+      Observed live on GET https://api.bybe.io/v1/offers with no Authorization header, 2026-08-13.
+      Returns content-type text/html with an empty body - not JSON, and not declared on any
+      operation in the specification.
+    method: probed

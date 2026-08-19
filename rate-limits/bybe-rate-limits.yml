@@ -1,0 +1,35 @@
+generated: '2026-08-13'
+method: probed
+source: >-
+  https://api.bybe.io/v1/swagger.yaml (specification) and a live unauthenticated request to
+  https://api.bybe.io/v1/offers, 2026-08-13
+limit_count: 0
+limits: []
+response_headers: []
+exhaustion_status: null
+retry_after: false
+note: >-
+  BYBE publishes no rate limits. The v1 specification declares no 429 response on any of its 16
+  operations, the developers page (https://bybe.com/developers) says nothing about throttling, and
+  the live response carried no X-RateLimit-*, RateLimit-* or Retry-After header. An agent calling
+  this API has no runtime signal telling it when to back off, and no documented number to plan
+  against. Recorded as an honest zero.
+
+observed_response_headers:
+  request: 'GET https://api.bybe.io/v1/offers (no Authorization header)'
+  status: 401
+  headers:
+    - 'cache-control: no-cache'
+    - 'x-request-id: 8cad2585-0784-44ba-86a5-e88c00a5abbc'
+    - 'x-runtime: 0.003499'
+    - 'x-content-type-options: nosniff'
+    - 'x-xss-protection: 1'
+    - 'strict-transport-security: max-age=31536000; includeSubDomains'
+  note: >-
+    x-request-id and x-runtime are present on every response and are usable for tracing and support
+    correlation (see conventions/bybe-conventions.yml), but neither is a rate-limit signal.
+
+evidence:
+  - {url: 'https://api.bybe.io/v1/offers', status: 401}
+  - {url: 'https://api.bybe.io/v1/swagger.yaml', status: 200}
+  - {url: 'https://bybe.com/developers', status: 200}

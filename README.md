@@ -42,6 +42,48 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-BYBE is a company surfaced as a portfolio company of techstars and added to the API Evangelist network as a stub for enrichment. This profile is a lead awaiting the enrichment pipeline.
+BYBE, Inc. is a promotion platform for the beer, wine and spirits industry. Brands fund cash-back
+rebates in the BYBE dashboard; retailers embed those offers in their own apps, sites and loyalty
+programs; BYBE handles US state-by-state alcohol promotion compliance, redemption validation,
+clearing and consumer payout. Backed by Techstars and Rev1 Ventures, and acquired by
+[Swiftly](https://www.swiftly.com/news/swiftly-acquires-bybe-powering-the-future-of-alcohol-promotions-in-retail)
+in March 2024, BYBE continues to operate under its own brand and domains.
+
+## The API
+
+BYBE publishes a real OpenAPI 3.0.1 contract for its Retail API — **16 operations across 7 tags**
+(Clips, Consumers, Manufacturers, Offers, Products, Redemptions, Stores).
+
+| | |
+|---|---|
+| Specification | <https://api.bybe.io/v1/swagger.yaml> |
+| Reference | <https://docs.bybe.io/> (Swagger UI at `api.bybe.io/docs/index.html`) |
+| Base URL | `https://api.bybe.io` — paths carry the `/v1` prefix |
+| Staging | `https://api.bybestaging.io` (docs at `docs.bybestaging.io`) |
+| Auth | HTTP Basic — API key as username, API secret as password, issued at <https://developer.bybe.io/> |
+| Overview | <https://bybe.com/developers> — also documents an SFTP CSV batch alternative |
+| Pricing | <https://bybe.com/pricing> — 25% + $0.25 per successful transaction, capped at $1.75; free for retailers |
+| Status | <https://status.bybe.com/> |
+
+The contract expresses BYBE's compliance boundary directly: its only component schema is a US state
+enum, used as the `state` filter on offers and stores.
+
+### Notes for anyone integrating
+
+- **No `Idempotency-Key` header.** Safe retry comes from the caller-supplied `retailer_identifier`
+  natural key — `POST /v1/clips` returns `303` with a `location` pointing at the existing clip on a
+  duplicate offer/consumer pair, and `409` when the key collides with a different clip.
+- **Errors are not RFC 9457.** The envelope is `{"<resource>": {"errors": {"<field>": ["<message>"]}}}`
+  with no machine-readable code.
+- **No published rate limits** — no `X-RateLimit-*`, no `Retry-After`, no `429` in the contract.
+- The specification declares **no `servers[]` block and no `operationId`s**, so every artifact in
+  this repository cites operations by method + path.
+
+### What BYBE does not publish
+
+No SDK in any package registry, no CLI, no MCP server, no A2A agent card, no webhooks or AsyncAPI,
+no `/.well-known/` documents, no security.txt, no trust center or named certifications, no dated
+changelog, and no deprecation policy. Each of those absences is recorded with its probe evidence in
+the relevant artifact rather than left blank.
 
 Backed by: techstars — https://bybe.com/

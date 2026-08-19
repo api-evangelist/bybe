@@ -1,0 +1,92 @@
+generated: '2026-08-13'
+method: derived
+status: candidate
+source: openapi/bybe-api-openapi-original.yml
+
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: unknown
+  verified: probed
+  note: >-
+    BYBE ships NO MCP server, hosted or local. https://api.bybe.io/mcp returns 404; no MCP server
+    appears in npm (0 results for "bybe"), in the BYBE GitHub organization (2 public repos, neither
+    MCP), or anywhere on bybe.com / docs.bybe.io / developer.bybe.io. The tools below are a
+    DERIVED CANDIDATE list - one tool per operation in BYBE's published OpenAPI - and no MCPServer
+    pointer is emitted in apis.yml, because emitting one would credit BYBE with an agent surface it
+    does not serve.
+
+server:
+  name: bybe
+  transport: null
+  url: null
+
+backing_api:
+  spec: openapi/bybe-api-openapi-original.yml
+  base_url: https://api.bybe.io
+  auth: HTTP Basic (api_key as username, api_secret as password)
+  caveat: >-
+    The BYBE specification declares NO operationId on any operation, so each candidate tool below is
+    bound to its backing operation by METHOD + PATH, which is what the contract actually publishes.
+    No operationId is invented.
+
+tools:
+  - name: list_offers
+    description: List live digital rebate offers, optionally filtered by US state.
+    source_operation: 'openapi/bybe-api-openapi-original.yml#GET /v1/offers'
+  - name: get_offer
+    description: Get details for a single offer.
+    source_operation: 'openapi/bybe-api-openapi-original.yml#GET /v1/offers/{id}'
+  - name: list_clips
+    description: List clips, optionally filtering by offer or by the consumer's retailer identifier.
+    source_operation: 'openapi/bybe-api-openapi-original.yml#GET /v1/clips'
+  - name: create_clip
+    description: Clip (save) an offer for a consumer.
+    source_operation: 'openapi/bybe-api-openapi-original.yml#POST /v1/clips'
+    consequence: write
+  - name: get_clip
+    description: Show a single clip.
+    source_operation: 'openapi/bybe-api-openapi-original.yml#GET /v1/clips/{id}'
+  - name: create_consumer
+    description: Create a consumer keyed by the retailer's own loyalty identifier.
+    source_operation: 'openapi/bybe-api-openapi-original.yml#POST /v1/consumers'
+    consequence: write
+  - name: get_consumer
+    description: Show a consumer by retailer identifier.
+    source_operation: 'openapi/bybe-api-openapi-original.yml#GET /v1/consumers/{retailer_identifier}'
+  - name: list_manufacturers
+    description: List alcohol beverage manufacturers.
+    source_operation: 'openapi/bybe-api-openapi-original.yml#GET /v1/manufacturers'
+  - name: get_manufacturer
+    description: Show a manufacturer.
+    source_operation: 'openapi/bybe-api-openapi-original.yml#GET /v1/manufacturers/{id}'
+  - name: list_products
+    description: List products, filterable by type, subtype, package type and manufacturer.
+    source_operation: 'openapi/bybe-api-openapi-original.yml#GET /v1/products'
+  - name: get_product
+    description: Show a single product.
+    source_operation: 'openapi/bybe-api-openapi-original.yml#GET /v1/products/{id}'
+  - name: list_stores
+    description: List stores, filterable by US state.
+    source_operation: 'openapi/bybe-api-openapi-original.yml#GET /v1/stores'
+  - name: get_store
+    description: Show store details.
+    source_operation: 'openapi/bybe-api-openapi-original.yml#GET /v1/stores/{id}'
+  - name: list_redemption_disbursements
+    description: List redemption disbursements, filterable by consumer retailer identifier.
+    source_operation: 'openapi/bybe-api-openapi-original.yml#GET /v1/redemption_disbursements'
+  - name: create_redemption_disbursement
+    description: >-
+      Submit purchases for redemption validation and trigger a consumer payout. Money-moving.
+    source_operation: 'openapi/bybe-api-openapi-original.yml#POST /v1/redemption_disbursements'
+    consequence: physical
+  - name: get_redemption_disbursement
+    description: Show a redemption disbursement.
+    source_operation: 'openapi/bybe-api-openapi-original.yml#GET /v1/redemption_disbursements/{id}'
+
+evidence:
+  - {url: 'https://api.bybe.io/mcp', status: 404}
+  - {url: 'https://registry.npmjs.org/-/v1/search?text=bybe', status: 200, result: 0 packages}
+  - {url: 'https://api.github.com/orgs/bybe-inc/repos', status: 200, result: 2 repos, neither MCP}

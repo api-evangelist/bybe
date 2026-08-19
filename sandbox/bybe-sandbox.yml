@@ -1,0 +1,74 @@
+generated: '2026-08-13'
+method: probed
+source: https://status.bybe.com/ (BYBE's own status page links the staging surfaces)
+status: staging-environment-published-credentials-gated
+
+note: >-
+  BYBE runs a publicly reachable STAGING environment and links it from its own status page - the
+  window.config block on https://status.bybe.com/ contains a button labelled "API Docs" pointing at
+  https://docs.bybestaging.io. That is BYBE naming the surface itself, which is why it is recorded
+  here rather than guessed from the domain pattern.
+
+  What BYBE does NOT publish: any test credential, magic test value, test identifier range, fixture,
+  trigger tool, or time-simulation facility. There is no key-prefix convention separating test from
+  live keys (both environments use HTTP Basic with an api_key/api_secret pair issued by BYBE). A
+  developer cannot self-serve into this sandbox; credentials come from a BYBE representative.
+
+environments:
+  - name: production
+    api_host: https://api.bybe.io
+    docs: https://docs.bybe.io/
+    spec: https://api.bybe.io/v1/swagger.yaml
+    status: 200
+  - name: staging
+    api_host: https://api.bybestaging.io
+    docs: https://docs.bybestaging.io/
+    spec: https://api.bybestaging.io/v1/swagger.yaml
+    status: 200
+    note: >-
+      Serves the same BYBE API v1 specification as production. Also named as the non-local server
+      in the v2-alpha1 specification (https://api.bybe.io/v2/swagger.yaml declares
+      https://{defaultHost} with defaultHost defaulting to api.bybestaging.io).
+  - name: local
+    api_host: http://api.bybe.localhost:3000
+    status: n/a
+    note: >-
+      Declared as "Local Development Server" in the v2-alpha1 specification. Not a BYBE-hosted
+      surface; recorded only because it appears verbatim in a published document.
+
+test_credentials:
+  published: false
+  key_prefixes: []
+  detail: >-
+    Credentials for both environments are issued from the BYBE developer page
+    (https://developer.bybe.io/, account login required), per the specification's own security
+    scheme description: "You can get these credentials, or generate new ones, on your developer
+    page."
+
+magic_test_values:
+  published: false
+  detail: >-
+    None. The specification's response examples contain illustrative record IDs (offer 980190962,
+    clip 1018350796, consumer 113629430) and an example UPC used in a 422 error message
+    (929352935829352935), but these are documentation examples, NOT published test fixtures, and
+    are recorded here only so a later pass does not mistake them for sandbox values.
+
+test_clocks: {published: false}
+fixtures: {published: false}
+triggers: {published: false}
+
+interactive_console:
+  url: https://docs.bybe.io/
+  type: Swagger UI
+  detail: >-
+    BYBE serves Swagger UI at https://api.bybe.io/docs/index.html (docs.bybe.io redirects there)
+    with the "Try it out" feature and an Authorize button. It executes against PRODUCTION, and the
+    specification's auth description explicitly points at it: "This will be shown as a curl request
+    for you if you use the 'try it out' feature on this page while authorized." Usable only with
+    real issued credentials.
+
+evidence:
+  - {url: 'https://docs.bybestaging.io/', status: 200}
+  - {url: 'https://api.bybestaging.io/v1/swagger.yaml', status: 200}
+  - {url: 'https://docs.bybe.io/', status: 200}
+  - {url: 'https://status.bybe.com/', status: 200}

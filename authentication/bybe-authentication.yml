@@ -1,0 +1,19 @@
+generated: '2026-08-13'
+method: derived
+source: openapi/bybe-api-openapi-original.yml
+summary:
+  types:
+  - http
+schemes:
+- name: basic_auth
+  type: http
+  scheme: basic
+  description: |-
+    Use your API key (token) and your API secret for username and password respectively.
+
+     You can get these credentials, or generate new ones, on your developer page.
+
+     You should encode your `Authorization:` header value in base64 as `api_key:api_secret`.
+     (This will be shown as a curl request for you if you use the 'try it out' feature on this page while authorized.)
+  sources:
+  - openapi/bybe-api-openapi-original.yml

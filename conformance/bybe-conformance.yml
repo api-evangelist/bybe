@@ -1,0 +1,79 @@
+generated: '2026-08-13'
+method: derived
+source: openapi/bybe-api-openapi-original.yml
+note: >-
+  Cross-cutting standards assertions for the BYBE API v1, derived from the harvested specification
+  and from live probes. BYBE publishes no compliance or certification page (no trust center, no
+  SOC 2 / ISO 27001 / PCI claim was found on bybe.com or any BYBE host), so no `Compliance` pointer
+  is emitted. Its published compliance posture is regulatory - US state-by-state alcohol
+  promotion law - not an infosec certification program.
+
+standards:
+  - id: openapi-3.0
+    conforms: true
+    evidence: 'openapi: 3.0.1 at https://api.bybe.io/v1/swagger.yaml, parses, 14 paths / 16 operations'
+  - id: http-basic-auth
+    conforms: true
+    evidence: components.securitySchemes.basic_auth type http scheme basic, applied to all 16 operations
+  - id: oauth2
+    conforms: false
+    evidence: no oauth2 security scheme in the specification and no OAuth documentation found
+  - id: oidc
+    conforms: false
+    evidence: '/.well-known/openid-configuration returns 404 on api.bybe.io and developer.bybe.io'
+  - id: rfc9457-problem-details
+    conforms: false
+    evidence: >-
+      error bodies use a Rails nested-errors envelope ({"clip": {"errors": {...}}}) with media type
+      application/json; no application/problem+json anywhere in the specification
+  - id: rfc9116-security-txt
+    conforms: false
+    evidence: '/.well-known/security.txt returns 404 on api.bybe.io and developer.bybe.io'
+  - id: rfc8594-sunset-header
+    conforms: false
+    evidence: no Sunset or Deprecation header on the live response; no deprecation policy published
+  - id: rfc8615-well-known
+    conforms: false
+    evidence: every /.well-known/ path probed returned 404 (api.bybe.io) or a login/SPA body
+  - id: json-api
+    conforms: false
+    evidence: responses are bare resource objects, not JSON:API documents
+  - id: pagination
+    conforms: partial
+    evidence: >-
+      page + limit query parameters on the five collection endpoints, but no pagination envelope,
+      total count, or Link header declared in any response
+  - id: idempotency
+    conforms: partial
+    evidence: >-
+      no Idempotency-Key header; safe retry is provided by the caller-supplied natural key
+      retailer_identifier, with HTTP 303 + location on duplicate and HTTP 409 on key collision
+      (POST /v1/clips)
+  - id: tls-1.2-plus
+    conforms: true
+    evidence: TLSv1.3 on bybe.com; HTTPS enforced on api.bybe.io
+  - id: hsts
+    conforms: true
+    evidence: 'strict-transport-security: max-age=31536000; includeSubDomains on https://api.bybe.io/v1/offers (2026-08-13)'
+  - id: mcp
+    conforms: false
+    evidence: 'https://api.bybe.io/mcp returns 404; no MCP server published'
+  - id: a2a
+    conforms: false
+    evidence: '/.well-known/agent-card.json and /.well-known/agent.json return 404 (api.bybe.io, developer.bybe.io), 401 (dashboard.bybe.io) and an SPA HTML shell (bybe.com)'
+  - id: asyncapi
+    conforms: false
+    evidence: no event, streaming or webhook surface documented; the asynchronous channel BYBE publishes is SFTP CSV batch upload
+
+regulatory:
+  domain: US alcohol beverage promotion
+  claim: >-
+    BYBE describes state-by-state compliance as its foundational product requirement and markets
+    itself as operating "at the intersection of regulation and technology" (bybe.com).
+  machine_readable_evidence: >-
+    components.schemas.state_string_enum plus the `state` filter on GET /v1/offers and
+    GET /v1/stores - the compliance boundary is expressed in the contract itself.
+  certifications_published: []
+  note: >-
+    No named security or privacy certification (SOC 2, ISO 27001, PCI DSS, HIPAA, FedRAMP) is
+    claimed on any BYBE surface found. Recorded as an honest absence, not a failure.

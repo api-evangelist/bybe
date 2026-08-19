@@ -1,0 +1,50 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the BYBE API
+  version: 1.0.0
+extends: openapi/bybe-api-openapi-original.yml
+x-provenance:
+  generated: '2026-08-13'
+  method: generated
+  source: openapi/bybe-api-openapi-original.yml
+  note: >-
+    The harvested BYBE API v1 specification (https://api.bybe.io/v1/swagger.yaml) declares no
+    servers[] block and no operationId on any of its 16 operations. This overlay records the
+    production host observed live (https://api.bybe.io returns HTTP 401 on GET /v1/offers, i.e.
+    the host is real and the surface is auth-gated) and the API Evangelist annotations, without
+    mutating the harvested original.
+actions:
+  - target: $.info
+    update:
+      x-apievangelist-profile: https://apis.io/provider/bybe/
+      x-apievangelist-harvested: '2026-08-13'
+      x-apievangelist-source: https://api.bybe.io/v1/swagger.yaml
+      x-apievangelist-docs: https://docs.bybe.io/
+  - target: $
+    update:
+      servers:
+        - url: https://api.bybe.io
+          description: >-
+            BYBE API production host. Not declared in the harvested specification; established by
+            probe (https://api.bybe.io/v1/offers -> HTTP 401 auth challenge) and by BYBE's own
+            Swagger UI at https://api.bybe.io/docs/index.html loading /v1/swagger.yaml. Paths in
+            the specification already carry the /v1 prefix.
+        - url: https://api.bybestaging.io
+          description: >-
+            BYBE staging environment, published by BYBE on its own status page
+            (https://status.bybe.com links "API Docs" to https://docs.bybestaging.io) and serving
+            the same v1 specification.
+  - target: $.components.securitySchemes.basic_auth
+    update:
+      x-credential-source: https://developer.bybe.io/
+      x-note: >-
+        HTTP Basic where username = API key (token) and password = API secret, per the
+        specification's own scheme description. Credentials are issued from the BYBE developer
+        page, which requires a BYBE account.
+  - target: $.paths['/v1/clips'].post
+    update:
+      x-idempotency: >-
+        Natural-key deduplication. The caller-supplied clip.retailer_identifier is the dedupe key -
+        a repeat of the same offer/consumer pair returns HTTP 303 with a location field pointing at
+        the existing clip, and a different clip reusing an already-taken retailer_identifier returns
+        HTTP 409. Retries are therefore safe without an Idempotency-Key header.

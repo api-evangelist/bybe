@@ -1,0 +1,133 @@
+generated: '2026-08-13'
+method: derived
+source: openapi/bybe-api-openapi-original.yml
+note: >-
+  Entity graph derived from the BYBE API v1 specification. The specification declares only ONE
+  component schema (state_string_enum, the US state enum) - every request and response body is
+  inlined, and responses are documented by example rather than schema. The entities and
+  relationships below are therefore read from the inline request-body properties and from the
+  response example payloads, both of which are BYBE's own published content. Nothing is inferred
+  from outside the specification except where marked.
+
+identifiers:
+  style: integer surrogate keys plus caller-supplied natural keys
+  primary: >-
+    `id` - a BYBE-issued integer (examples: offer 980190962, clip 1018350796, consumer 113629430).
+    No prefixed string IDs.
+  natural_key: >-
+    `retailer_identifier` - a caller-supplied string that appears on clips, consumers, stores,
+    purchases and redemption disbursements. It is the join key between the retailer's own systems
+    and BYBE, and it is what makes writes safely retryable (see conventions/).
+  product_key: >-
+    `upc` - Universal Product Code, described in the specification as the preferred product
+    identifier; a retailer's own SKU may be used as product.retailer_identifier only if
+    pre-registered with BYBE.
+  money: >-
+    Split *_cents integer + *_currency string pairs (budget_limit_cents/budget_limit_currency,
+    discount_cents/discount_currency, budget_remaining_cents/budget_remaining_currency).
+  dates: ISO 8601 UTC strings (created_at, updated_at, start_date, end_date, purchase_date).
+
+entities:
+  - name: Manufacturer
+    description: An alcohol beverage brand owner whose promotions BYBE distributes.
+    endpoints: ['GET /v1/manufacturers', 'GET /v1/manufacturers/{id}']
+  - name: Product
+    description: A beer, wine or spirits product, keyed by UPC, owned by a manufacturer.
+    endpoints: ['GET /v1/products', 'GET /v1/products/{id}']
+    fields: [id, upc, product_type_id, product_subtype_id, product_package_type_id, manufacturer_id]
+  - name: Offer
+    description: A rebate/discount promotion with a budget, a discount amount, conditions and a live window.
+    endpoints: ['GET /v1/offers', 'GET /v1/offers/{id}']
+    fields:
+      - id
+      - name
+      - budget_limit_cents
+      - budget_limit_currency
+      - budget_remaining_cents
+      - budget_remaining_currency
+      - discount_cents
+      - discount_currency
+      - conditions
+      - details
+      - start_date
+      - end_date
+      - per_consumer_limit
+      - redemptions_available
+      - redemptions_remaining
+      - offer_type
+      - created_at
+      - updated_at
+  - name: OfferType
+    description: Classification of an offer (example value "discount").
+    embedded_in: Offer
+    fields: [id, name, created_at, updated_at]
+  - name: Consumer
+    description: A shopper, identified to BYBE only by the retailer's own loyalty identifier.
+    endpoints: ['POST /v1/consumers', 'GET /v1/consumers/{retailer_identifier}']
+    fields: [id, retailer_identifier, email, payout_email_override, created_at]
+    note: >-
+      Looked up by retailer_identifier rather than by BYBE id - the only path parameter in the API
+      that is not an integer id.
+  - name: Clip
+    description: A consumer saving ("clipping") an offer inside a retailer's app or site.
+    endpoints: ['GET /v1/clips', 'POST /v1/clips', 'GET /v1/clips/{id}']
+    fields: [id, retailer_identifier, latitude, longitude, created_at, offer, consumer]
+  - name: Store
+    description: A physical or digital retail location where an offer can be redeemed.
+    endpoints: ['GET /v1/stores', 'GET /v1/stores/{id}']
+    fields: [id, retailer_identifier, state]
+    note: Stores must be registered with BYBE in advance; redemption validation matches against them.
+  - name: RedemptionDisbursement
+    description: >-
+      A batch of purchases submitted for redemption validation, resulting in a payout to the
+      consumer.
+    endpoints:
+      - 'GET /v1/redemption_disbursements'
+      - 'POST /v1/redemption_disbursements'
+      - 'GET /v1/redemption_disbursements/{id}'
+    fields: [id, retailer_identifier, payment_method, email, consumer, purchases]
+    note: >-
+      payment_method defaults to 'payout_flow', which lets the consumer accrue a balance and choose
+      their payout method; supported values vary by retailer.
+  - name: Purchase
+    description: One transaction/receipt inside a redemption disbursement.
+    embedded_in: RedemptionDisbursement
+    fields: [retailer_identifier, purchase_date, store, redemptions, line_items]
+  - name: LineItem
+    description: One product line on a purchase.
+    embedded_in: Purchase
+    fields: [product, quantity, price, product_name]
+  - name: Redemption
+    description: An attempt to apply a specific offer against a purchase.
+    embedded_in: Purchase
+    fields: [offer_id]
+
+relationships:
+  - {from: Product, to: Manufacturer, type: belongs_to, via: manufacturer_id}
+  - {from: Offer, to: OfferType, type: has_one, via: offer_type}
+  - {from: Offer, to: Store, type: has_many, via: show_stores expansion on GET /v1/offers}
+  - {from: Offer, to: Clip, type: has_many, via: show_clips expansion on GET /v1/offers}
+  - {from: Clip, to: Offer, type: belongs_to, via: offer_id}
+  - {from: Clip, to: Consumer, type: belongs_to, via: consumer.retailer_identifier}
+  - {from: RedemptionDisbursement, to: Consumer, type: belongs_to, via: consumer.retailer_identifier}
+  - {from: RedemptionDisbursement, to: Purchase, type: has_many, via: 'purchases[]'}
+  - {from: Purchase, to: Store, type: belongs_to, via: store.retailer_identifier}
+  - {from: Purchase, to: LineItem, type: has_many, via: 'line_items[]'}
+  - {from: Purchase, to: Redemption, type: has_many, via: 'redemptions[]'}
+  - {from: Redemption, to: Offer, type: belongs_to, via: offer_id}
+  - {from: LineItem, to: Product, type: belongs_to, via: product.upc or product.retailer_identifier}
+
+domains:
+  catalog: [Manufacturer, Product, Offer, OfferType]
+  engagement: [Consumer, Clip]
+  fulfilment: [RedemptionDisbursement, Purchase, LineItem, Redemption]
+  network: [Store]
+
+geography:
+  constraint: US only
+  evidence: >-
+    components.schemas.state_string_enum enumerates the 50 US states plus DC and the US
+    territories (AS, FM, GU, MH, MP, PR, PW, VI). It is the `state` filter on GET /v1/offers and
+    GET /v1/stores, which is how BYBE's state-by-state alcohol compliance surfaces in the contract.
+
+render: null

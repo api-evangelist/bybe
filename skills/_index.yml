@@ -1,0 +1,39 @@
+generated: '2026-08-13'
+method: generated
+source: openapi/bybe-api-openapi-original.yml
+note: >-
+  Agent Skills for the BYBE API v1, generated from BYBE's published specification
+  (https://api.bybe.io/v1/swagger.yaml) plus the conventions and error semantics captured in
+  conventions/bybe-conventions.yml and errors/bybe-problem-types.yml. The specification declares NO
+  operationId on any operation, so every skill cites operations by METHOD + PATH exactly as
+  published - no operationId is invented anywhere in this set.
+skills:
+  - file: bybe-clip-an-offer.md
+    name: Clip a BYBE offer for a shopper
+    api: openapi/bybe-api-openapi-original.yml
+    operations:
+      - 'GET /v1/offers'
+      - 'GET /v1/offers/{id}'
+      - 'POST /v1/consumers'
+      - 'GET /v1/consumers/{retailer_identifier}'
+      - 'POST /v1/clips'
+      - 'GET /v1/clips'
+  - file: bybe-submit-redemption.md
+    name: Submit purchases to BYBE and pay a shopper back
+    api: openapi/bybe-api-openapi-original.yml
+    consequence: money-moving
+    operations:
+      - 'POST /v1/redemption_disbursements'
+      - 'GET /v1/redemption_disbursements'
+      - 'GET /v1/redemption_disbursements/{id}'
+      - 'GET /v1/stores'
+  - file: bybe-sync-catalog.md
+    name: Sync the BYBE product and manufacturer catalog
+    api: openapi/bybe-api-openapi-original.yml
+    operations:
+      - 'GET /v1/manufacturers'
+      - 'GET /v1/manufacturers/{id}'
+      - 'GET /v1/products'
+      - 'GET /v1/products/{id}'
+      - 'GET /v1/stores'
+      - 'GET /v1/stores/{id}'

@@ -1,0 +1,57 @@
+generated: '2026-08-13'
+method: searched
+source: >-
+  npm registry search, PyPI, RubyGems, crates.io, and the BYBE GitHub organization
+  (https://github.com/BYBE-INC), 2026-08-13
+package_count: 0
+official_sdk_count: 0
+packages: []
+note: >-
+  BYBE publishes NO client library in any package registry. Searched and confirmed empty:
+  registry.npmjs.org search "bybe" (0 results), pypi.org/pypi/{bybe,bybe-api,pybybe}/json (404 each),
+  rubygems.org search "bybe" (empty array), crates.io q=bybe (0 crates). The BYBE developers page
+  (https://bybe.com/developers) documents raw HTTP + an SFTP CSV fallback and links no SDK; the
+  Swagger UI at https://docs.bybe.io/ offers only its built-in curl generator.
+
+  No SDKs pointer is emitted in apis.yml, because there is no SDK. This is a recorded zero, not an
+  unchecked field.
+
+github_organization:
+  url: https://github.com/BYBE-INC
+  login: BYBE-INC
+  name: BYBE Inc
+  description: Simplify digital alcohol promotions for retailers & consumers
+  location: Columbus, OH
+  created: '2017-07-11'
+  public_repos: 2
+  repositories:
+    - name: js-utilities
+      url: https://github.com/BYBE-INC/js-utilities
+      language: JavaScript
+      description: Helpful JavaScript functions for network requests, formatting, processing, and more
+      is_api_client: false
+      version: null
+      published: null
+      registry: null
+      note: >-
+        General-purpose internal JavaScript helpers. Not published to npm and not a BYBE API client -
+        it wraps nothing in the BYBE API v1 contract. Not counted as an SDK.
+    - name: prerender-alpine
+      url: https://github.com/BYBE-INC/prerender-alpine
+      language: JavaScript
+      description: Lightweight Prerender container built on Alpine Linux with Node and Headless Chromium
+      is_api_client: false
+      version: null
+      published: null
+      registry: null
+      note: >-
+        Infrastructure tooling - a Prerender container, presumably what serves crawlable HTML for the
+        bybe.com React SPA. Not an SDK.
+
+registries_checked:
+  - {registry: npm, query: bybe, results: 0, url: 'https://registry.npmjs.org/-/v1/search?text=bybe'}
+  - {registry: pypi, query: bybe, status: 404}
+  - {registry: pypi, query: bybe-api, status: 404}
+  - {registry: pypi, query: pybybe, status: 404}
+  - {registry: rubygems, query: bybe, results: 0}
+  - {registry: crates.io, query: bybe, results: 0}

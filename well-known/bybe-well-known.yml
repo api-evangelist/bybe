@@ -1,0 +1,54 @@
+generated: '2026-08-13'
+method: probed
+source: live GET of each /.well-known/ path on every BYBE host, 2026-08-13
+result: no-documents-found
+note: >-
+  Every /.well-known/ path was probed on all four BYBE hosts. NOT ONE returned a document, so no
+  WellKnown and no SecurityTxt pointer is emitted in apis.yml - this file records an absence, and
+  an absence must not be scored as a presence.
+
+  Two false-positive shapes were hit here and are called out explicitly so a later pass does not
+  re-credit them:
+    1. bybe.com is a client-rendered React single-page app whose catch-all answers HTTP 200 with
+       the SAME index.html for EVERY path - /.well-known/security.txt, /.well-known/agent-card.json,
+       /llms.txt and /sitemap.xml all return 200 text/html. These are soft 404s, not documents.
+    2. dashboard.bybe.io answers 401 with a JSON sign-in error for /.well-known/* paths, and
+       returns a 200 HTML login page for /.well-known/openid-configuration. That is the Rails/Devise
+       login wall, not an OIDC discovery document.
+
+hosts:
+  - host: https://api.bybe.io
+    role: API host (production)
+    documents:
+      - {path: /.well-known/security.txt, status: 404, file: null}
+      - {path: /.well-known/openid-configuration, status: 404, file: null}
+      - {path: /.well-known/oauth-authorization-server, status: 404, file: null}
+      - {path: /.well-known/oauth-protected-resource, status: 404, file: null}
+      - {path: /.well-known/api-catalog, status: 404, file: null}
+      - {path: /.well-known/ai-plugin.json, status: 404, file: null}
+      - {path: /.well-known/agent-card.json, status: 404, file: null}
+      - {path: /.well-known/agent.json, status: 404, file: null}
+  - host: https://bybe.com
+    role: marketing site (React SPA)
+    documents:
+      - {path: /.well-known/security.txt, status: 200, file: null, verdict: soft-404, detail: 'SPA index.html returned, content-type text/html'}
+      - {path: /.well-known/agent-card.json, status: 200, file: null, verdict: soft-404, detail: 'SPA index.html returned, content-type text/html'}
+      - {path: /.well-known/agent.json, status: 200, file: null, verdict: soft-404, detail: 'SPA index.html returned, content-type text/html'}
+      - {path: /llms.txt, status: 200, file: null, verdict: soft-404, detail: 'SPA index.html returned; robots.txt additionally disallows *.txt'}
+      - {path: /sitemap.xml, status: 200, file: null, verdict: soft-404, detail: 'SPA index.html returned'}
+      - {path: /robots.txt, status: 200, file: null, verdict: real, detail: 'genuine robots.txt; Disallow rules for /fonts /styles /scripts and *.css *.js *.json *.txt *.md'}
+  - host: https://developer.bybe.io
+    role: developer portal (account login)
+    documents:
+      - {path: /.well-known/security.txt, status: 404, file: null}
+      - {path: /.well-known/agent-card.json, status: 404, file: null}
+      - {path: /llms.txt, status: 404, file: null}
+  - host: https://dashboard.bybe.io
+    role: brand/retailer dashboard (account login)
+    documents:
+      - {path: /.well-known/security.txt, status: 401, file: null, detail: 'You need to sign in or sign up before continuing'}
+      - {path: /.well-known/agent-card.json, status: 401, file: null}
+      - {path: /.well-known/agent.json, status: 401, file: null}
+      - {path: /.well-known/openid-configuration, status: 200, file: null, verdict: soft-404, detail: 'HTML sign-in page, not an OIDC discovery document'}
+
+pointers_emitted: []
