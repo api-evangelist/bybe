@@ -38,7 +38,7 @@ x-acquired-by: swiftly
 x-acquired-date: '2024-03-06'
 x-tier: enriched
 x-tier-reason: published-openapi-harvested
-specificationVersion: '0.20'
+specificationVersion: '0.23'
 created: '2026-07-17'
 modified: '2026-08-13'
 tags:
