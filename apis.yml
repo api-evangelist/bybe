@@ -55,30 +55,100 @@ tags:
 - Disbursements
 - Compliance
 apis:
-- aid: bybe:bybe-api
-  name: BYBE API
-  description: >-
-    The BYBE Retail API, version 1. A REST/JSON API over BYBE's records of manufacturers, rebate
-    offers and products, plus the write surface that clips offers for consumers, validates
-    redemptions against purchases, and disburses consumer payouts. 16 operations across 7 tags,
-    authenticated with HTTP Basic (API key as username, API secret as password). US only - the
-    state filter on offers and stores is how BYBE's state-by-state alcohol compliance boundary is
-    expressed in the contract.
+- aid: bybe:bybe-clips-api
+  name: BYBE Clips API
+  description: A clip represents a consumer's intent to redeem an offer.
   humanURL: https://docs.bybe.io/
   baseURL: https://api.bybe.io
   tags:
-  - Rebates
-  - Promotions
-  - Offers
-  - Redemptions
-  - Disbursements
-  - Alcohol
-  - Retail
+  - Clips
   properties:
   - type: OpenAPI
-    url: openapi/bybe-api-openapi-original.yml
-  - type: Overlay
-    url: overlays/bybe-api-overlay.yaml
+    url: openapi/bybe-clips-api-openapi.yml
+  - type: APIReference
+    url: https://docs.bybe.io/
+  - type: Documentation
+    url: https://bybe.com/developers
+- aid: bybe:bybe-consumers-api
+  name: BYBE Consumers API
+  description: A consumer purchases products and clips/redeems offers.
+  humanURL: https://docs.bybe.io/
+  baseURL: https://api.bybe.io
+  tags:
+  - Consumers
+  properties:
+  - type: OpenAPI
+    url: openapi/bybe-consumers-api-openapi.yml
+  - type: APIReference
+    url: https://docs.bybe.io/
+  - type: Documentation
+    url: https://bybe.com/developers
+- aid: bybe:bybe-manufacturers-api
+  name: BYBE Manufacturers API
+  description: A manufacturer represents a company or organization that produces alcoholic beverages.
+  humanURL: https://docs.bybe.io/
+  baseURL: https://api.bybe.io
+  tags:
+  - Manufacturers
+  properties:
+  - type: OpenAPI
+    url: openapi/bybe-manufacturers-api-openapi.yml
+  - type: APIReference
+    url: https://docs.bybe.io/
+  - type: Documentation
+    url: https://bybe.com/developers
+- aid: bybe:bybe-offers-api
+  name: BYBE Offers API
+  description: An offer is created and funded by a manufacturer (brand).
+  humanURL: https://docs.bybe.io/
+  baseURL: https://api.bybe.io
+  tags:
+  - Offers
+  properties:
+  - type: OpenAPI
+    url: openapi/bybe-offers-api-openapi.yml
+  - type: APIReference
+    url: https://docs.bybe.io/
+  - type: Documentation
+    url: https://bybe.com/developers
+- aid: bybe:bybe-products-api
+  name: BYBE Products API
+  description: A product is produced by a manufacturer and is featured in offers.
+  humanURL: https://docs.bybe.io/
+  baseURL: https://api.bybe.io
+  tags:
+  - Products
+  properties:
+  - type: OpenAPI
+    url: openapi/bybe-products-api-openapi.yml
+  - type: APIReference
+    url: https://docs.bybe.io/
+  - type: Documentation
+    url: https://bybe.com/developers
+- aid: bybe:bybe-redemptions-api
+  name: BYBE Redemptions API
+  description: Redemptions are created to disburse money to a consumer for their specific purchases.
+  humanURL: https://docs.bybe.io/
+  baseURL: https://api.bybe.io
+  tags:
+  - Redemptions
+  properties:
+  - type: OpenAPI
+    url: openapi/bybe-redemptions-api-openapi.yml
+  - type: APIReference
+    url: https://docs.bybe.io/
+  - type: Documentation
+    url: https://bybe.com/developers
+- aid: bybe:bybe-stores-api
+  name: BYBE Stores API
+  description: A store represents a specific retail location of a retailer.
+  humanURL: https://docs.bybe.io/
+  baseURL: https://api.bybe.io
+  tags:
+  - Stores
+  properties:
+  - type: OpenAPI
+    url: openapi/bybe-stores-api-openapi.yml
   - type: APIReference
     url: https://docs.bybe.io/
   - type: Documentation
@@ -89,6 +159,8 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: Overlay
+  url: overlays/bybe-api-overlay.yaml
 - type: Website
   url: https://bybe.com/
 - type: DeveloperPortal
