@@ -171,6 +171,9 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: CapabilityMap
+  url: capabilities/bybe-capability-edges.yml
+  name: BYBE Business Capability Map
 - type: Overlay
   url: overlays/bybe-api-overlay.yaml
 - type: Website

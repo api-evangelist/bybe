@@ -1,0 +1,26 @@
+slug: bybe
+provider: BYBE
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Retail & Consumer Goods
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 1
+edges:
+- tag: Offers
+  spec_file: bybe-offers-api-openapi.yml
+  capability_id: BC-440.30
+  capability_id_l1: BC-440
+  capability_name: Discount & Promotion Management
+  confidence: 0.75
+  evidence: '"get details for a single offer"; "rebate offers"; schema state_string_enum (state-by-state
+    promotion eligibility)'
+  reason: Offers here are brand-funded consumer rebate offers with state eligibility — promotional offer
+    and rebate definition, i.e. Discount & Promotion Management. Not trade promotion, as the investment
+    is consumer cash-back rather than retailer joint business planning.
