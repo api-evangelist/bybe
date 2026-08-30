@@ -129,6 +129,8 @@ apis:
   humanURL: https://docs.bybe.io/
   baseURL: https://api.bybe.io
   tags:
+  - Product
+  tags_raw:
   - Products
   properties:
   - type: OpenAPI
