@@ -1,0 +1,1926 @@
+openapi: 3.2.0
+info:
+  title: BYBE Offers API
+  version: v1
+  description: "\n Welcome to the BYBE API, V1.\n\n You can use this API to access our records of manufacturers,\n rebate offers, and products,\n as well as to validate redemptions for transactions and disburse payouts.\n\n Each route is documented below via the OpenAPI specification.\n Authorization details can be entered using the `Authorize` button on the right.\n "
+servers:
+- url: https://api.bybe.io
+  description: Base URL declared by the provider in apis.yml (roadmap#122).
+tags:
+- name: Offers
+  description: An offer is created and funded by a manufacturer (brand).
+paths:
+  /v1/offers:
+    get:
+      summary: list offers
+      tags:
+      - Offers
+      security:
+      - basic_auth: []
+      parameters:
+      - name: show_stores
+        in: query
+        required: false
+        description: Defaults to true. When false, stores associated with offers are omitted from the response.
+        schema:
+          type: boolean
+      - name: show_clips
+        in: query
+        required: false
+        description: Requires consumer_retailer_identifier. When true, includes clip information for each offer indicating whether it has been clipped by the specified consumer.
+        schema:
+          type: boolean
+      - name: show_details
+        in: query
+        required: false
+        description: Defaults to false. When true, includes additional store details in the response.
+        schema:
+          type: boolean
+      - name: prelive
+        in: query
+        required: false
+        description: Defaults to false. When true, includes offers that are not yet live. Client applications should ensure pre-live offers are hidden from end users.
+        schema:
+          type: boolean
+      - name: state
+        in: query
+        schema:
+          $ref: '#/components/schemas/state_string_enum'
+        required: false
+        description: By default offers from all states are returned. When a state is specified, only offers available in that state are returned.
+      - name: consumer_retailer_identifier
+        in: query
+        required: false
+        description: Adds consumer-specific information to the response, such as whether the offers have been clipped by the specified consumer as well as how many redemptions remain for each offer based on the consumer's previous redemptions.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successfully list offers
+          content:
+            application/json:
+              examples:
+                unfiltered list of offers:
+                  value:
+                    offers:
+                    - id: 36642025
+                      name: 1Super Saver Special
+                      image_url: thing.jpg
+                      clip_limit: 5
+                      clips_remaining: 5
+                      budget_limit_cents: 5000
+                      budget_limit_currency: USD
+                      budget_remaining_cents: 4000
+                      budget_remaining_currency: USD
+                      discount_cents: 500
+                      discount_currency: USD
+                      conditions: Buy 2 get 1 back
+                      details: Offer details
+                      start_date: '2017-10-27'
+                      end_date: '2026-06-27'
+                      per_consumer_limit: 2
+                      daily_per_consumer_limit: null
+                      redemptions_available: 4
+                      redemptions_remaining: 2
+                      redemptions_used: 2
+                      offer_type: discount
+                      created_at: '2026-06-17T13:55:38.857Z'
+                      updated_at: '2026-06-17T13:55:38.857Z'
+                      featured: false
+                      vibrant_colors: null
+                      image_content_height: null
+                      required_products:
+                      - quantity: 2
+                        product:
+                          retailer_identifier: 123ABC
+                          name: 12 Pack of Beer
+                          upcs:
+                          - '767676767676'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Beer
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: 12 Pack of Beer
+                          upcs:
+                          - '767676767676'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Beer
+                        - retailer_identifier: null
+                          name: Jug of Vodka
+                          upcs:
+                          - '434363463463'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        - retailer_identifier: 123ABC
+                          name: Soft Apple Cider
+                          upcs:
+                          - '123123123123'
+                          - '989898989898'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                      states:
+                      - abbreviation: OH
+                        name: Ohio
+                      - abbreviation: IL
+                        name: Illinois
+                      stores:
+                      - retailer_identifier: 0000Valid
+                      - retailer_identifier: CBUS
+                    - id: 373731297
+                      name: Buy 2x and Y
+                      image_url: thing.jpg
+                      clip_limit: 5
+                      clips_remaining: 5
+                      budget_limit_cents: 5000
+                      budget_limit_currency: USD
+                      budget_remaining_cents: 5000
+                      budget_remaining_currency: USD
+                      discount_cents: 100
+                      discount_currency: USD
+                      conditions: Buy 2x and y get z back
+                      details: Offer details
+                      start_date: '2017-10-27'
+                      end_date: '2026-06-27'
+                      per_consumer_limit: 2
+                      daily_per_consumer_limit: null
+                      redemptions_available: 4
+                      redemptions_remaining: 4
+                      redemptions_used: 0
+                      offer_type: discount
+                      created_at: '2026-06-17T13:55:38.857Z'
+                      updated_at: '2026-06-17T13:55:38.857Z'
+                      featured: false
+                      vibrant_colors: null
+                      image_content_height: null
+                      required_products:
+                      - quantity: 2
+                        product:
+                          retailer_identifier: 123ABC
+                          name: 12 Pack of Beer
+                          upcs:
+                          - '767676767676'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Beer
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: 12 Pack of Beer
+                          upcs:
+                          - '767676767676'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Beer
+                      - quantity: 1
+                        product:
+                          retailer_identifier: 123ABC
+                          name: Soft Apple Cider
+                          upcs:
+                          - '123123123123'
+                          - '989898989898'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: Soft Apple Cider
+                          upcs:
+                          - '123123123123'
+                          - '989898989898'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                      states:
+                      - abbreviation: OH
+                        name: Ohio
+                      stores:
+                      - retailer_identifier: 0000Valid
+                      - retailer_identifier: CBUS
+                    - id: 567695903
+                      name: Buy w and 2x
+                      image_url: thing.jpg
+                      clip_limit: 5
+                      clips_remaining: 5
+                      budget_limit_cents: 5000
+                      budget_limit_currency: USD
+                      budget_remaining_cents: 5000
+                      budget_remaining_currency: USD
+                      discount_cents: 300
+                      discount_currency: USD
+                      conditions: Buy w and x get z back
+                      details: Offer details
+                      start_date: '2017-10-27'
+                      end_date: '2026-06-27'
+                      per_consumer_limit: 2
+                      daily_per_consumer_limit: null
+                      redemptions_available: 4
+                      redemptions_remaining: 4
+                      redemptions_used: 0
+                      offer_type: discount
+                      created_at: '2026-06-17T13:55:38.857Z'
+                      updated_at: '2026-06-17T13:55:38.857Z'
+                      featured: false
+                      vibrant_colors: null
+                      image_content_height: null
+                      required_products:
+                      - quantity: 1
+                        product:
+                          retailer_identifier: null
+                          name: Jug of Vodka
+                          upcs:
+                          - '434363463463'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        products:
+                        - retailer_identifier: null
+                          name: Jug of Vodka
+                          upcs:
+                          - '434363463463'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                      - quantity: 2
+                        product:
+                          retailer_identifier: 123ABC
+                          name: 12 Pack of Beer
+                          upcs:
+                          - '767676767676'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Beer
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: 12 Pack of Beer
+                          upcs:
+                          - '767676767676'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Beer
+                      states:
+                      - abbreviation: OH
+                        name: Ohio
+                      stores:
+                      - retailer_identifier: 0000Valid
+                      - retailer_identifier: CBUS
+                    - id: 980190962
+                      name: Holiday sale on spirits
+                      image_url: thing.jpg
+                      clip_limit: 5
+                      clips_remaining: -3
+                      budget_limit_cents: 2000
+                      budget_limit_currency: USD
+                      budget_remaining_cents: 1700
+                      budget_remaining_currency: USD
+                      discount_cents: 300
+                      discount_currency: USD
+                      conditions: Offer open to residents of KY. Must be 21 years of age.
+                      details: Offer details
+                      start_date: '2017-10-27'
+                      end_date: '2026-07-17'
+                      per_consumer_limit: 1
+                      daily_per_consumer_limit: null
+                      redemptions_available: 10
+                      redemptions_remaining: 9
+                      redemptions_used: 1
+                      offer_type: discount
+                      created_at: '2026-06-17T13:55:38.857Z'
+                      updated_at: '2026-06-17T13:55:38.857Z'
+                      featured: false
+                      vibrant_colors: null
+                      image_content_height: null
+                      required_products:
+                      - quantity: 1
+                        product:
+                          retailer_identifier: 123ABC
+                          name: Hard Apple Cider
+                          upcs:
+                          - '123123123123'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: Hard Apple Cider
+                          upcs:
+                          - '123123123123'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                      states:
+                      - abbreviation: OH
+                        name: Ohio
+                      - abbreviation: CA
+                        name: California
+                      stores:
+                      - retailer_identifier: LA
+                      - retailer_identifier: 0000Valid
+                      - retailer_identifier: CBUS
+                    - id: 298486374
+                      name: Holiday sale on booze
+                      image_url: thing.jpg
+                      clip_limit: 5
+                      clips_remaining: 5
+                      budget_limit_cents: 2000
+                      budget_limit_currency: USD
+                      budget_remaining_cents: 2000
+                      budget_remaining_currency: USD
+                      discount_cents: 300
+                      discount_currency: USD
+                      conditions: Offer open to residents of OH. Must be 21 years of age.
+                      details: Offer details
+                      start_date: '2017-10-27'
+                      end_date: '2026-07-17'
+                      per_consumer_limit: 1
+                      daily_per_consumer_limit: null
+                      redemptions_available: 10
+                      redemptions_remaining: 10
+                      redemptions_used: 0
+                      offer_type: discount
+                      created_at: '2026-06-10T13:55:38.000Z'
+                      updated_at: '2026-06-10T13:55:38.000Z'
+                      featured: false
+                      vibrant_colors: null
+                      image_content_height: null
+                      required_products:
+                      - quantity: 1
+                        product:
+                          retailer_identifier: 123ABC
+                          name: Hard Apple Cider
+                          upcs:
+                          - '123123123123'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: Hard Apple Cider
+                          upcs:
+                          - '123123123123'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                      - quantity: 1
+                        product:
+                          retailer_identifier: 123ABC
+                          name: Hard Apple Cider
+                          upcs:
+                          - '123123123123'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: Hard Apple Cider
+                          upcs:
+                          - '123123123123'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        - retailer_identifier: 123ABC
+                          name: Soft Apple Cider
+                          upcs:
+                          - '123123123123'
+                          - '989898989898'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                      states:
+                      - abbreviation: OH
+                        name: Ohio
+                      stores:
+                      - retailer_identifier: 0000Valid
+                      - retailer_identifier: CBUS
+                    meta:
+                      count: 5
+                filter offers by state:
+                  value:
+                    offers:
+                    - id: 36642025
+                      name: 1Super Saver Special
+                      image_url: thing.jpg
+                      clip_limit: 5
+                      clips_remaining: 5
+                      budget_limit_cents: 5000
+                      budget_limit_currency: USD
+                      budget_remaining_cents: 4000
+                      budget_remaining_currency: USD
+                      discount_cents: 500
+                      discount_currency: USD
+                      conditions: Buy 2 get 1 back
+                      details: Offer details
+                      start_date: '2017-10-27'
+                      end_date: '2026-06-27'
+                      per_consumer_limit: 2
+                      daily_per_consumer_limit: null
+                      redemptions_available: 4
+                      redemptions_remaining: 2
+                      redemptions_used: 2
+                      offer_type: discount
+                      created_at: '2026-06-17T13:55:38.857Z'
+                      updated_at: '2026-06-17T13:55:38.857Z'
+                      featured: false
+                      vibrant_colors: null
+                      image_content_height: null
+                      required_products:
+                      - quantity: 2
+                        product:
+                          retailer_identifier: 123ABC
+                          name: 12 Pack of Beer
+                          upcs:
+                          - '767676767676'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Beer
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: 12 Pack of Beer
+                          upcs:
+                          - '767676767676'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Beer
+                        - retailer_identifier: null
+                          name: Jug of Vodka
+                          upcs:
+                          - '434363463463'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        - retailer_identifier: 123ABC
+                          name: Soft Apple Cider
+                          upcs:
+                          - '123123123123'
+                          - '989898989898'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                      states:
+                      - abbreviation: OH
+                        name: Ohio
+                      - abbreviation: IL
+                        name: Illinois
+                      stores:
+                      - retailer_identifier: 0000Valid
+                      - retailer_identifier: CBUS
+                    - id: 373731297
+                      name: Buy 2x and Y
+                      image_url: thing.jpg
+                      clip_limit: 5
+                      clips_remaining: 5
+                      budget_limit_cents: 5000
+                      budget_limit_currency: USD
+                      budget_remaining_cents: 5000
+                      budget_remaining_currency: USD
+                      discount_cents: 100
+                      discount_currency: USD
+                      conditions: Buy 2x and y get z back
+                      details: Offer details
+                      start_date: '2017-10-27'
+                      end_date: '2026-06-27'
+                      per_consumer_limit: 2
+                      daily_per_consumer_limit: null
+                      redemptions_available: 4
+                      redemptions_remaining: 4
+                      redemptions_used: 0
+                      offer_type: discount
+                      created_at: '2026-06-17T13:55:38.857Z'
+                      updated_at: '2026-06-17T13:55:38.857Z'
+                      featured: false
+                      vibrant_colors: null
+                      image_content_height: null
+                      required_products:
+                      - quantity: 2
+                        product:
+                          retailer_identifier: 123ABC
+                          name: 12 Pack of Beer
+                          upcs:
+                          - '767676767676'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Beer
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: 12 Pack of Beer
+                          upcs:
+                          - '767676767676'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Beer
+                      - quantity: 1
+                        product:
+                          retailer_identifier: 123ABC
+                          name: Soft Apple Cider
+                          upcs:
+                          - '123123123123'
+                          - '989898989898'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: Soft Apple Cider
+                          upcs:
+                          - '123123123123'
+                          - '989898989898'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                      states:
+                      - abbreviation: OH
+                        name: Ohio
+                      stores:
+                      - retailer_identifier: 0000Valid
+                      - retailer_identifier: CBUS
+                    - id: 567695903
+                      name: Buy w and 2x
+                      image_url: thing.jpg
+                      clip_limit: 5
+                      clips_remaining: 5
+                      budget_limit_cents: 5000
+                      budget_limit_currency: USD
+                      budget_remaining_cents: 5000
+                      budget_remaining_currency: USD
+                      discount_cents: 300
+                      discount_currency: USD
+                      conditions: Buy w and x get z back
+                      details: Offer details
+                      start_date: '2017-10-27'
+                      end_date: '2026-06-27'
+                      per_consumer_limit: 2
+                      daily_per_consumer_limit: null
+                      redemptions_available: 4
+                      redemptions_remaining: 4
+                      redemptions_used: 0
+                      offer_type: discount
+                      created_at: '2026-06-17T13:55:38.857Z'
+                      updated_at: '2026-06-17T13:55:38.857Z'
+                      featured: false
+                      vibrant_colors: null
+                      image_content_height: null
+                      required_products:
+                      - quantity: 1
+                        product:
+                          retailer_identifier: null
+                          name: Jug of Vodka
+                          upcs:
+                          - '434363463463'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        products:
+                        - retailer_identifier: null
+                          name: Jug of Vodka
+                          upcs:
+                          - '434363463463'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                      - quantity: 2
+                        product:
+                          retailer_identifier: 123ABC
+                          name: 12 Pack of Beer
+                          upcs:
+                          - '767676767676'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Beer
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: 12 Pack of Beer
+                          upcs:
+                          - '767676767676'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Beer
+                      states:
+                      - abbreviation: OH
+                        name: Ohio
+                      stores:
+                      - retailer_identifier: 0000Valid
+                      - retailer_identifier: CBUS
+                    - id: 980190962
+                      name: Holiday sale on spirits
+                      image_url: thing.jpg
+                      clip_limit: 5
+                      clips_remaining: -3
+                      budget_limit_cents: 2000
+                      budget_limit_currency: USD
+                      budget_remaining_cents: 1700
+                      budget_remaining_currency: USD
+                      discount_cents: 300
+                      discount_currency: USD
+                      conditions: Offer open to residents of KY. Must be 21 years of age.
+                      details: Offer details
+                      start_date: '2017-10-27'
+                      end_date: '2026-07-17'
+                      per_consumer_limit: 1
+                      daily_per_consumer_limit: null
+                      redemptions_available: 10
+                      redemptions_remaining: 9
+                      redemptions_used: 1
+                      offer_type: discount
+                      created_at: '2026-06-17T13:55:38.857Z'
+                      updated_at: '2026-06-17T13:55:38.857Z'
+                      featured: false
+                      vibrant_colors: null
+                      image_content_height: null
+                      required_products:
+                      - quantity: 1
+                        product:
+                          retailer_identifier: 123ABC
+                          name: Hard Apple Cider
+                          upcs:
+                          - '123123123123'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: Hard Apple Cider
+                          upcs:
+                          - '123123123123'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                      states:
+                      - abbreviation: OH
+                        name: Ohio
+                      - abbreviation: CA
+                        name: California
+                      stores:
+                      - retailer_identifier: 0000Valid
+                      - retailer_identifier: CBUS
+                    - id: 298486374
+                      name: Holiday sale on booze
+                      image_url: thing.jpg
+                      clip_limit: 5
+                      clips_remaining: 5
+                      budget_limit_cents: 2000
+                      budget_limit_currency: USD
+                      budget_remaining_cents: 2000
+                      budget_remaining_currency: USD
+                      discount_cents: 300
+                      discount_currency: USD
+                      conditions: Offer open to residents of OH. Must be 21 years of age.
+                      details: Offer details
+                      start_date: '2017-10-27'
+                      end_date: '2026-07-17'
+                      per_consumer_limit: 1
+                      daily_per_consumer_limit: null
+                      redemptions_available: 10
+                      redemptions_remaining: 10
+                      redemptions_used: 0
+                      offer_type: discount
+                      created_at: '2026-06-10T13:55:38.000Z'
+                      updated_at: '2026-06-10T13:55:38.000Z'
+                      featured: false
+                      vibrant_colors: null
+                      image_content_height: null
+                      required_products:
+                      - quantity: 1
+                        product:
+                          retailer_identifier: 123ABC
+                          name: Hard Apple Cider
+                          upcs:
+                          - '123123123123'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: Hard Apple Cider
+                          upcs:
+                          - '123123123123'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                      - quantity: 1
+                        product:
+                          retailer_identifier: 123ABC
+                          name: Hard Apple Cider
+                          upcs:
+                          - '123123123123'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: Hard Apple Cider
+                          upcs:
+                          - '123123123123'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        - retailer_identifier: 123ABC
+                          name: Soft Apple Cider
+                          upcs:
+                          - '123123123123'
+                          - '989898989898'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                      states:
+                      - abbreviation: OH
+                        name: Ohio
+                      stores:
+                      - retailer_identifier: 0000Valid
+                      - retailer_identifier: CBUS
+                    meta:
+                      count: 5
+                filter offers for a specific consumer:
+                  value:
+                    offers:
+                    - id: 36642025
+                      name: 1Super Saver Special
+                      image_url: thing.jpg
+                      discount_cents: 500
+                      discount_currency: USD
+                      conditions: Buy 2 get 1 back
+                      details: Offer details
+                      start_date: '2017-10-27'
+                      end_date: '2026-06-27'
+                      per_consumer_limit: 2
+                      daily_per_consumer_limit: null
+                      redemptions: []
+                      redemptions_remaining: 2
+                      redemptions_used: 2
+                      consumer_redemptions_remaining: 2
+                      offer_type: discount
+                      created_at: '2026-06-17T13:55:38.857Z'
+                      updated_at: '2026-06-17T13:55:38.857Z'
+                      required_products:
+                      - quantity: 2
+                        product:
+                          retailer_identifier: 123ABC
+                          name: 12 Pack of Beer
+                          upcs:
+                          - '767676767676'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Beer
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: 12 Pack of Beer
+                          upcs:
+                          - '767676767676'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Beer
+                        - retailer_identifier: null
+                          name: Jug of Vodka
+                          upcs:
+                          - '434363463463'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        - retailer_identifier: 123ABC
+                          name: Soft Apple Cider
+                          upcs:
+                          - '123123123123'
+                          - '989898989898'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                      featured: false
+                      stores:
+                      - retailer_identifier: 0000Valid
+                      - retailer_identifier: CBUS
+                      states:
+                      - abbreviation: OH
+                        name: Ohio
+                      - abbreviation: IL
+                        name: Illinois
+                    - id: 373731297
+                      name: Buy 2x and Y
+                      image_url: thing.jpg
+                      discount_cents: 100
+                      discount_currency: USD
+                      conditions: Buy 2x and y get z back
+                      details: Offer details
+                      start_date: '2017-10-27'
+                      end_date: '2026-06-27'
+                      per_consumer_limit: 2
+                      daily_per_consumer_limit: null
+                      redemptions: []
+                      redemptions_remaining: 4
+                      redemptions_used: 0
+                      consumer_redemptions_remaining: 2
+                      offer_type: discount
+                      created_at: '2026-06-17T13:55:38.857Z'
+                      updated_at: '2026-06-17T13:55:38.857Z'
+                      required_products:
+                      - quantity: 2
+                        product:
+                          retailer_identifier: 123ABC
+                          name: 12 Pack of Beer
+                          upcs:
+                          - '767676767676'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Beer
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: 12 Pack of Beer
+                          upcs:
+                          - '767676767676'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Beer
+                      - quantity: 1
+                        product:
+                          retailer_identifier: 123ABC
+                          name: Soft Apple Cider
+                          upcs:
+                          - '123123123123'
+                          - '989898989898'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: Soft Apple Cider
+                          upcs:
+                          - '123123123123'
+                          - '989898989898'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                      featured: false
+                      stores:
+                      - retailer_identifier: 0000Valid
+                      - retailer_identifier: CBUS
+                      states:
+                      - abbreviation: OH
+                        name: Ohio
+                    - id: 567695903
+                      name: Buy w and 2x
+                      image_url: thing.jpg
+                      discount_cents: 300
+                      discount_currency: USD
+                      conditions: Buy w and x get z back
+                      details: Offer details
+                      start_date: '2017-10-27'
+                      end_date: '2026-06-27'
+                      per_consumer_limit: 2
+                      daily_per_consumer_limit: null
+                      redemptions: []
+                      redemptions_remaining: 4
+                      redemptions_used: 0
+                      consumer_redemptions_remaining: 2
+                      offer_type: discount
+                      created_at: '2026-06-17T13:55:38.857Z'
+                      updated_at: '2026-06-17T13:55:38.857Z'
+                      required_products:
+                      - quantity: 1
+                        product:
+                          retailer_identifier: null
+                          name: Jug of Vodka
+                          upcs:
+                          - '434363463463'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        products:
+                        - retailer_identifier: null
+                          name: Jug of Vodka
+                          upcs:
+                          - '434363463463'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                      - quantity: 2
+                        product:
+                          retailer_identifier: 123ABC
+                          name: 12 Pack of Beer
+                          upcs:
+                          - '767676767676'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Beer
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: 12 Pack of Beer
+                          upcs:
+                          - '767676767676'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Beer
+                      featured: false
+                      stores:
+                      - retailer_identifier: 0000Valid
+                      - retailer_identifier: CBUS
+                      states:
+                      - abbreviation: OH
+                        name: Ohio
+                    - id: 980190962
+                      name: Holiday sale on spirits
+                      image_url: thing.jpg
+                      discount_cents: 300
+                      discount_currency: USD
+                      conditions: Offer open to residents of KY. Must be 21 years of age.
+                      details: Offer details
+                      start_date: '2017-10-27'
+                      end_date: '2026-07-17'
+                      per_consumer_limit: 1
+                      daily_per_consumer_limit: null
+                      redemptions:
+                      - id: 980190962
+                        status: accepted
+                        purchase_id: 980190962
+                        offer_id: 980190962
+                        created_at: '2026-06-17T13:55:38.895Z'
+                        updated_at: '2026-06-17T13:55:38.895Z'
+                        payout_group_id: null
+                        consumer_balance_id: null
+                      redemptions_remaining: 9
+                      redemptions_used: 1
+                      consumer_redemptions_remaining: 0
+                      offer_type: discount
+                      created_at: '2026-06-17T13:55:38.857Z'
+                      updated_at: '2026-06-17T13:55:38.857Z'
+                      required_products:
+                      - quantity: 1
+                        product:
+                          retailer_identifier: 123ABC
+                          name: Hard Apple Cider
+                          upcs:
+                          - '123123123123'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: Hard Apple Cider
+                          upcs:
+                          - '123123123123'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                      featured: false
+                      stores:
+                      - retailer_identifier: LA
+                      - retailer_identifier: 0000Valid
+                      - retailer_identifier: CBUS
+                      states:
+                      - abbreviation: OH
+                        name: Ohio
+                      - abbreviation: CA
+                        name: California
+                    - id: 298486374
+                      name: Holiday sale on booze
+                      image_url: thing.jpg
+                      discount_cents: 300
+                      discount_currency: USD
+                      conditions: Offer open to residents of OH. Must be 21 years of age.
+                      details: Offer details
+                      start_date: '2017-10-27'
+                      end_date: '2026-07-17'
+                      per_consumer_limit: 1
+                      daily_per_consumer_limit: null
+                      redemptions: []
+                      redemptions_remaining: 10
+                      redemptions_used: 0
+                      consumer_redemptions_remaining: 1
+                      offer_type: discount
+                      created_at: '2026-06-10T13:55:38.000Z'
+                      updated_at: '2026-06-10T13:55:38.000Z'
+                      required_products:
+                      - quantity: 1
+                        product:
+                          retailer_identifier: 123ABC
+                          name: Hard Apple Cider
+                          upcs:
+                          - '123123123123'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: Hard Apple Cider
+                          upcs:
+                          - '123123123123'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                      - quantity: 1
+                        product:
+                          retailer_identifier: 123ABC
+                          name: Hard Apple Cider
+                          upcs:
+                          - '123123123123'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: Hard Apple Cider
+                          upcs:
+                          - '123123123123'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        - retailer_identifier: 123ABC
+                          name: Soft Apple Cider
+                          upcs:
+                          - '123123123123'
+                          - '989898989898'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                      featured: false
+                      stores:
+                      - retailer_identifier: 0000Valid
+                      - retailer_identifier: CBUS
+                      states:
+                      - abbreviation: OH
+                        name: Ohio
+                    meta:
+                      count: 5
+                shows prelive offers:
+                  value:
+                    offers:
+                    - id: 36642025
+                      name: 1Super Saver Special
+                      image_url: thing.jpg
+                      clip_limit: 5
+                      clips_remaining: 5
+                      budget_limit_cents: 5000
+                      budget_limit_currency: USD
+                      budget_remaining_cents: 4000
+                      budget_remaining_currency: USD
+                      discount_cents: 500
+                      discount_currency: USD
+                      conditions: Buy 2 get 1 back
+                      details: Offer details
+                      start_date: '2017-10-27'
+                      end_date: '2026-06-27'
+                      per_consumer_limit: 2
+                      daily_per_consumer_limit: null
+                      redemptions_available: 4
+                      redemptions_remaining: 2
+                      redemptions_used: 2
+                      offer_type: discount
+                      created_at: '2026-06-17T13:55:38.857Z'
+                      updated_at: '2026-06-17T13:55:38.857Z'
+                      featured: false
+                      vibrant_colors: null
+                      image_content_height: null
+                      required_products:
+                      - quantity: 2
+                        product:
+                          retailer_identifier: 123ABC
+                          name: 12 Pack of Beer
+                          upcs:
+                          - '767676767676'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Beer
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: 12 Pack of Beer
+                          upcs:
+                          - '767676767676'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Beer
+                        - retailer_identifier: null
+                          name: Jug of Vodka
+                          upcs:
+                          - '434363463463'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        - retailer_identifier: 123ABC
+                          name: Soft Apple Cider
+                          upcs:
+                          - '123123123123'
+                          - '989898989898'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                      states:
+                      - abbreviation: OH
+                        name: Ohio
+                      - abbreviation: IL
+                        name: Illinois
+                      stores:
+                      - retailer_identifier: 0000Valid
+                      - retailer_identifier: CBUS
+                    - id: 373731297
+                      name: Buy 2x and Y
+                      image_url: thing.jpg
+                      clip_limit: 5
+                      clips_remaining: 5
+                      budget_limit_cents: 5000
+                      budget_limit_currency: USD
+                      budget_remaining_cents: 5000
+                      budget_remaining_currency: USD
+                      discount_cents: 100
+                      discount_currency: USD
+                      conditions: Buy 2x and y get z back
+                      details: Offer details
+                      start_date: '2017-10-27'
+                      end_date: '2026-06-27'
+                      per_consumer_limit: 2
+                      daily_per_consumer_limit: null
+                      redemptions_available: 4
+                      redemptions_remaining: 4
+                      redemptions_used: 0
+                      offer_type: discount
+                      created_at: '2026-06-17T13:55:38.857Z'
+                      updated_at: '2026-06-17T13:55:38.857Z'
+                      featured: false
+                      vibrant_colors: null
+                      image_content_height: null
+                      required_products:
+                      - quantity: 2
+                        product:
+                          retailer_identifier: 123ABC
+                          name: 12 Pack of Beer
+                          upcs:
+                          - '767676767676'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Beer
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: 12 Pack of Beer
+                          upcs:
+                          - '767676767676'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Beer
+                      - quantity: 1
+                        product:
+                          retailer_identifier: 123ABC
+                          name: Soft Apple Cider
+                          upcs:
+                          - '123123123123'
+                          - '989898989898'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: Soft Apple Cider
+                          upcs:
+                          - '123123123123'
+                          - '989898989898'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                      states:
+                      - abbreviation: OH
+                        name: Ohio
+                      stores:
+                      - retailer_identifier: 0000Valid
+                      - retailer_identifier: CBUS
+                    - id: 567695903
+                      name: Buy w and 2x
+                      image_url: thing.jpg
+                      clip_limit: 5
+                      clips_remaining: 5
+                      budget_limit_cents: 5000
+                      budget_limit_currency: USD
+                      budget_remaining_cents: 5000
+                      budget_remaining_currency: USD
+                      discount_cents: 300
+                      discount_currency: USD
+                      conditions: Buy w and x get z back
+                      details: Offer details
+                      start_date: '2017-10-27'
+                      end_date: '2026-06-27'
+                      per_consumer_limit: 2
+                      daily_per_consumer_limit: null
+                      redemptions_available: 4
+                      redemptions_remaining: 4
+                      redemptions_used: 0
+                      offer_type: discount
+                      created_at: '2026-06-17T13:55:38.857Z'
+                      updated_at: '2026-06-17T13:55:38.857Z'
+                      featured: false
+                      vibrant_colors: null
+                      image_content_height: null
+                      required_products:
+                      - quantity: 1
+                        product:
+                          retailer_identifier: null
+                          name: Jug of Vodka
+                          upcs:
+                          - '434363463463'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        products:
+                        - retailer_identifier: null
+                          name: Jug of Vodka
+                          upcs:
+                          - '434363463463'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                      - quantity: 2
+                        product:
+                          retailer_identifier: 123ABC
+                          name: 12 Pack of Beer
+                          upcs:
+                          - '767676767676'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Beer
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: 12 Pack of Beer
+                          upcs:
+                          - '767676767676'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Beer
+                      states:
+                      - abbreviation: OH
+                        name: Ohio
+                      stores:
+                      - retailer_identifier: 0000Valid
+                      - retailer_identifier: CBUS
+                    - id: 980190962
+                      name: Holiday sale on spirits
+                      image_url: thing.jpg
+                      clip_limit: 5
+                      clips_remaining: -3
+                      budget_limit_cents: 2000
+                      budget_limit_currency: USD
+                      budget_remaining_cents: 1700
+                      budget_remaining_currency: USD
+                      discount_cents: 300
+                      discount_currency: USD
+                      conditions: Offer open to residents of KY. Must be 21 years of age.
+                      details: Offer details
+                      start_date: '2017-10-27'
+                      end_date: '2026-07-17'
+                      per_consumer_limit: 1
+                      daily_per_consumer_limit: null
+                      redemptions_available: 10
+                      redemptions_remaining: 9
+                      redemptions_used: 1
+                      offer_type: discount
+                      created_at: '2026-06-17T13:55:38.857Z'
+                      updated_at: '2026-06-17T13:55:38.857Z'
+                      featured: false
+                      vibrant_colors: null
+                      image_content_height: null
+                      required_products:
+                      - quantity: 1
+                        product:
+                          retailer_identifier: 123ABC
+                          name: Hard Apple Cider
+                          upcs:
+                          - '123123123123'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: Hard Apple Cider
+                          upcs:
+                          - '123123123123'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                      states:
+                      - abbreviation: OH
+                        name: Ohio
+                      - abbreviation: CA
+                        name: California
+                      stores:
+                      - retailer_identifier: LA
+                      - retailer_identifier: 0000Valid
+                      - retailer_identifier: CBUS
+                    - id: 298486374
+                      name: Holiday sale on booze
+                      image_url: thing.jpg
+                      clip_limit: 5
+                      clips_remaining: 5
+                      budget_limit_cents: 2000
+                      budget_limit_currency: USD
+                      budget_remaining_cents: 2000
+                      budget_remaining_currency: USD
+                      discount_cents: 300
+                      discount_currency: USD
+                      conditions: Offer open to residents of OH. Must be 21 years of age.
+                      details: Offer details
+                      start_date: '2017-10-27'
+                      end_date: '2026-07-17'
+                      per_consumer_limit: 1
+                      daily_per_consumer_limit: null
+                      redemptions_available: 10
+                      redemptions_remaining: 10
+                      redemptions_used: 0
+                      offer_type: discount
+                      created_at: '2026-06-10T13:55:38.000Z'
+                      updated_at: '2026-06-10T13:55:38.000Z'
+                      featured: false
+                      vibrant_colors: null
+                      image_content_height: null
+                      required_products:
+                      - quantity: 1
+                        product:
+                          retailer_identifier: 123ABC
+                          name: Hard Apple Cider
+                          upcs:
+                          - '123123123123'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: Hard Apple Cider
+                          upcs:
+                          - '123123123123'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                      - quantity: 1
+                        product:
+                          retailer_identifier: 123ABC
+                          name: Hard Apple Cider
+                          upcs:
+                          - '123123123123'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: Hard Apple Cider
+                          upcs:
+                          - '123123123123'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        - retailer_identifier: 123ABC
+                          name: Soft Apple Cider
+                          upcs:
+                          - '123123123123'
+                          - '989898989898'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                      states:
+                      - abbreviation: OH
+                        name: Ohio
+                      stores:
+                      - retailer_identifier: 0000Valid
+                      - retailer_identifier: CBUS
+                    meta:
+                      count: 5
+                hides stores if show_stores is false:
+                  value:
+                    offers:
+                    - id: 36642025
+                      name: 1Super Saver Special
+                      image_url: thing.jpg
+                      clip_limit: 5
+                      clips_remaining: 5
+                      budget_limit_cents: 5000
+                      budget_limit_currency: USD
+                      budget_remaining_cents: 4000
+                      budget_remaining_currency: USD
+                      discount_cents: 500
+                      discount_currency: USD
+                      conditions: Buy 2 get 1 back
+                      details: Offer details
+                      start_date: '2017-10-27'
+                      end_date: '2026-06-27'
+                      per_consumer_limit: 2
+                      daily_per_consumer_limit: null
+                      redemptions_available: 4
+                      redemptions_remaining: 2
+                      redemptions_used: 2
+                      offer_type: discount
+                      created_at: '2026-06-17T13:55:38.857Z'
+                      updated_at: '2026-06-17T13:55:38.857Z'
+                      featured: false
+                      vibrant_colors: null
+                      image_content_height: null
+                      required_products:
+                      - quantity: 2
+                        product:
+                          retailer_identifier: 123ABC
+                          name: 12 Pack of Beer
+                          upcs:
+                          - '767676767676'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Beer
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: 12 Pack of Beer
+                          upcs:
+                          - '767676767676'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Beer
+                        - retailer_identifier: null
+                          name: Jug of Vodka
+                          upcs:
+                          - '434363463463'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        - retailer_identifier: 123ABC
+                          name: Soft Apple Cider
+                          upcs:
+                          - '123123123123'
+                          - '989898989898'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                      states:
+                      - abbreviation: OH
+                        name: Ohio
+                      - abbreviation: IL
+                        name: Illinois
+                    - id: 373731297
+                      name: Buy 2x and Y
+                      image_url: thing.jpg
+                      clip_limit: 5
+                      clips_remaining: 5
+                      budget_limit_cents: 5000
+                      budget_limit_currency: USD
+                      budget_remaining_cents: 5000
+                      budget_remaining_currency: USD
+                      discount_cents: 100
+                      discount_currency: USD
+                      conditions: Buy 2x and y get z back
+                      details: Offer details
+                      start_date: '2017-10-27'
+                      end_date: '2026-06-27'
+                      per_consumer_limit: 2
+                      daily_per_consumer_limit: null
+                      redemptions_available: 4
+                      redemptions_remaining: 4
+                      redemptions_used: 0
+                      offer_type: discount
+                      created_at: '2026-06-17T13:55:38.857Z'
+                      updated_at: '2026-06-17T13:55:38.857Z'
+                      featured: false
+                      vibrant_colors: null
+                      image_content_height: null
+                      required_products:
+                      - quantity: 2
+                        product:
+                          retailer_identifier: 123ABC
+                          name: 12 Pack of Beer
+                          upcs:
+                          - '767676767676'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Beer
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: 12 Pack of Beer
+                          upcs:
+                          - '767676767676'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Beer
+                      - quantity: 1
+                        product:
+                          retailer_identifier: 123ABC
+                          name: Soft Apple Cider
+                          upcs:
+                          - '123123123123'
+                          - '989898989898'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: Soft Apple Cider
+                          upcs:
+                          - '123123123123'
+                          - '989898989898'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                      states:
+                      - abbreviation: OH
+                        name: Ohio
+                    - id: 567695903
+                      name: Buy w and 2x
+                      image_url: thing.jpg
+                      clip_limit: 5
+                      clips_remaining: 5
+                      budget_limit_cents: 5000
+                      budget_limit_currency: USD
+                      budget_remaining_cents: 5000
+                      budget_remaining_currency: USD
+                      discount_cents: 300
+                      discount_currency: USD
+                      conditions: Buy w and x get z back
+                      details: Offer details
+                      start_date: '2017-10-27'
+                      end_date: '2026-06-27'
+                      per_consumer_limit: 2
+                      daily_per_consumer_limit: null
+                      redemptions_available: 4
+                      redemptions_remaining: 4
+                      redemptions_used: 0
+                      offer_type: discount
+                      created_at: '2026-06-17T13:55:38.857Z'
+                      updated_at: '2026-06-17T13:55:38.857Z'
+                      featured: false
+                      vibrant_colors: null
+                      image_content_height: null
+                      required_products:
+                      - quantity: 1
+                        product:
+                          retailer_identifier: null
+                          name: Jug of Vodka
+                          upcs:
+                          - '434363463463'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        products:
+                        - retailer_identifier: null
+                          name: Jug of Vodka
+                          upcs:
+                          - '434363463463'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                      - quantity: 2
+                        product:
+                          retailer_identifier: 123ABC
+                          name: 12 Pack of Beer
+                          upcs:
+                          - '767676767676'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Beer
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: 12 Pack of Beer
+                          upcs:
+                          - '767676767676'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Beer
+                      states:
+                      - abbreviation: OH
+                        name: Ohio
+                    - id: 980190962
+                      name: Holiday sale on spirits
+                      image_url: thing.jpg
+                      clip_limit: 5
+                      clips_remaining: -3
+                      budget_limit_cents: 2000
+                      budget_limit_currency: USD
+                      budget_remaining_cents: 1700
+                      budget_remaining_currency: USD
+                      discount_cents: 300
+                      discount_currency: USD
+                      conditions: Offer open to residents of KY. Must be 21 years of age.
+                      details: Offer details
+                      start_date: '2017-10-27'
+                      end_date: '2026-07-17'
+                      per_consumer_limit: 1
+                      daily_per_consumer_limit: null
+                      redemptions_available: 10
+                      redemptions_remaining: 9
+                      redemptions_used: 1
+                      offer_type: discount
+                      created_at: '2026-06-17T13:55:38.857Z'
+                      updated_at: '2026-06-17T13:55:38.857Z'
+                      featured: false
+                      vibrant_colors: null
+                      image_content_height: null
+                      required_products:
+                      - quantity: 1
+                        product:
+                          retailer_identifier: 123ABC
+                          name: Hard Apple Cider
+                          upcs:
+                          - '123123123123'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: Hard Apple Cider
+                          upcs:
+                          - '123123123123'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                      states:
+                      - abbreviation: OH
+                        name: Ohio
+                      - abbreviation: CA
+                        name: California
+                    - id: 298486374
+                      name: Holiday sale on booze
+                      image_url: thing.jpg
+                      clip_limit: 5
+                      clips_remaining: 5
+                      budget_limit_cents: 2000
+                      budget_limit_currency: USD
+                      budget_remaining_cents: 2000
+                      budget_remaining_currency: USD
+                      discount_cents: 300
+                      discount_currency: USD
+                      conditions: Offer open to residents of OH. Must be 21 years of age.
+                      details: Offer details
+                      start_date: '2017-10-27'
+                      end_date: '2026-07-17'
+                      per_consumer_limit: 1
+                      daily_per_consumer_limit: null
+                      redemptions_available: 10
+                      redemptions_remaining: 10
+                      redemptions_used: 0
+                      offer_type: discount
+                      created_at: '2026-06-10T13:55:38.000Z'
+                      updated_at: '2026-06-10T13:55:38.000Z'
+                      featured: false
+                      vibrant_colors: null
+                      image_content_height: null
+                      required_products:
+                      - quantity: 1
+                        product:
+                          retailer_identifier: 123ABC
+                          name: Hard Apple Cider
+                          upcs:
+                          - '123123123123'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: Hard Apple Cider
+                          upcs:
+                          - '123123123123'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                      - quantity: 1
+                        product:
+                          retailer_identifier: 123ABC
+                          name: Hard Apple Cider
+                          upcs:
+                          - '123123123123'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        products:
+                        - retailer_identifier: 123ABC
+                          name: Hard Apple Cider
+                          upcs:
+                          - '123123123123'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                        - retailer_identifier: 123ABC
+                          name: Soft Apple Cider
+                          upcs:
+                          - '123123123123'
+                          - '989898989898'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          product_type:
+                            name: Cider
+                      states:
+                      - abbreviation: OH
+                        name: Ohio
+                    meta:
+                      count: 5
+  /v1/offers/{id}:
+    parameters:
+    - name: id
+      in: path
+      description: offer_id
+      required: true
+      schema:
+        type: string
+    get:
+      summary: get details for a single offer
+      tags:
+      - Offers
+      security:
+      - basic_auth: []
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              examples:
+                test_example:
+                  value:
+                    offer:
+                      id: 980190962
+                      name: Holiday sale on spirits
+                      image_url: thing.jpg
+                      clip_limit: 5
+                      clips_remaining: -3
+                      budget_limit_cents: 2000
+                      budget_limit_currency: USD
+                      budget_remaining_cents: 1700
+                      budget_remaining_currency: USD
+                      discount_cents: 300
+                      discount_currency: USD
+                      conditions: Offer open to residents of KY. Must be 21 years of age.
+                      details: Offer details
+                      start_date: '2017-10-27'
+                      end_date: '2026-07-17'
+                      per_consumer_limit: 1
+                      daily_per_consumer_limit: null
+                      redemptions_available: 10
+                      redemptions_remaining: 9
+                      redemptions_used: 1
+                      offer_type: discount
+                      created_at: '2026-06-17T13:55:38.857Z'
+                      updated_at: '2026-06-17T13:55:38.857Z'
+                      featured: false
+                      vibrant_colors: null
+                      image_content_height: null
+                      required_products:
+                      - quantity: 1
+                        product:
+                          id: 980190962
+                          name: Hard Apple Cider
+                          price_cents: 1200
+                          price_currency: USD
+                          description: A delicious hard apple cider, brewed to perfection.
+                          origin_locale: California
+                          origin_country: USA
+                          upcs:
+                          - '123123123123'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          package_unit_quantity: 1
+                          package_unit_volume: 12.0
+                          package_unit_volume_unit: fl oz
+                          retailer_identifier: 123ABC
+                          manufacturer:
+                            id: 1039554827
+                            name: AB InBev
+                            logo_image_url: https://s3.us-east-2.amazonaws.com/bybe-cdn/manufacturers/abinbev.png
+                            created_at: '2026-06-17T13:55:38.852Z'
+                            updated_at: '2026-06-17T13:55:38.852Z'
+                          product_type:
+                            id: 935439881
+                            name: Cider
+                            created_at: '2026-06-17T13:55:38.895Z'
+                            updated_at: '2026-06-17T13:55:38.895Z'
+                          product_subtype:
+                            id: 924165175
+                            name: Hard Cider
+                            created_at: '2026-06-17T13:55:38.851Z'
+                            updated_at: '2026-06-17T13:55:38.851Z'
+                          product_package_type:
+                            id: 591182547
+                            name: Can
+                            created_at: '2026-06-17T13:55:38.931Z'
+                            updated_at: '2026-06-17T13:55:38.931Z'
+                        products:
+                        - id: 980190962
+                          name: Hard Apple Cider
+                          price_cents: 1200
+                          price_currency: USD
+                          description: A delicious hard apple cider, brewed to perfection.
+                          origin_locale: California
+                          origin_country: USA
+                          upcs:
+                          - '123123123123'
+                          image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                          package_unit_quantity: 1
+                          package_unit_volume: 12.0
+                          package_unit_volume_unit: fl oz
+                          retailer_identifier: 123ABC
+                          manufacturer:
+                            id: 1039554827
+                            name: AB InBev
+                            logo_image_url: https://s3.us-east-2.amazonaws.com/bybe-cdn/manufacturers/abinbev.png
+                            created_at: '2026-06-17T13:55:38.852Z'
+                            updated_at: '2026-06-17T13:55:38.852Z'
+                          product_type:
+                            id: 935439881
+                            name: Cider
+                            created_at: '2026-06-17T13:55:38.895Z'
+                            updated_at: '2026-06-17T13:55:38.895Z'
+                          product_subtype:
+                            id: 924165175
+                            name: Hard Cider
+                            created_at: '2026-06-17T13:55:38.851Z'
+                            updated_at: '2026-06-17T13:55:38.851Z'
+                          product_package_type:
+                            id: 591182547
+                            name: Can
+                            created_at: '2026-06-17T13:55:38.931Z'
+                            updated_at: '2026-06-17T13:55:38.931Z'
+                      states:
+                      - abbreviation: OH
+                        name: Ohio
+                      - abbreviation: CA
+                        name: California
+                      stores:
+                      - id: 298486374
+                        name: LA Store
+                        retailer_identifier: LA
+                        address_line_1: 1 Capitol Square
+                        address_line_2: null
+                        address_city: Los Angeles
+                        address_state: CA
+                        address_latitude: 39.961176
+                        address_longitude: -82.998794
+                        created_at: '2026-06-17T13:55:38.914Z'
+                      - id: 335794492
+                        name: Always Valid Store
+                        retailer_identifier: 0000Valid
+                        address_line_1: 1 Capitol Square
+                        address_line_2: null
+                        address_city: Columbus
+                        address_state: OH
+                        address_latitude: 39.961176
+                        address_longitude: -82.998794
+                        created_at: '2026-06-17T13:55:38.914Z'
+                      - id: 980190962
+                        name: Columbus Store
+                        retailer_identifier: CBUS
+                        address_line_1: 1 Capitol Square
+                        address_line_2: Suite 100
+                        address_city: Columbus
+                        address_state: OH
+                        address_latitude: 39.961176
+                        address_longitude: -82.998794
+                        created_at: '2026-06-17T13:55:38.914Z'
+components:
+  schemas:
+    state_string_enum:
+      type: string
+      enum:
+      - AL
+      - AK
+      - AS
+      - AZ
+      - AR
+      - CA
+      - CO
+      - CT
+      - DE
+      - DC
+      - FM
+      - FL
+      - GA
+      - GU
+      - HI
+      - ID
+      - IL
+      - IN
+      - IA
+      - KS
+      - KY
+      - LA
+      - ME
+      - MH
+      - MD
+      - MA
+      - MI
+      - MN
+      - MS
+      - MO
+      - MT
+      - NE
+      - NV
+      - NH
+      - NJ
+      - NM
+      - NY
+      - NC
+      - ND
+      - MP
+      - OH
+      - OK
+      - OR
+      - PW
+      - PA
+      - PR
+      - RI
+      - SC
+      - SD
+      - TN
+      - TX
+      - UT
+      - VT
+      - VI
+      - VA
+      - WA
+      - WV
+      - WI
+      - WY
+  securitySchemes:
+    basic_auth:
+      type: http
+      scheme: basic
+      description: "\n Use your API key (token) and your API secret for username and password respectively.\n\n You can get these credentials, or generate new ones, on your developer page.\n\n You should encode your `Authorization:` header value in base64 as `api_key:api_secret`.\n (This will be shown as a curl request for you if you use the 'try it out' feature on this page while authorized.)\n "

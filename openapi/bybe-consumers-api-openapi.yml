@@ -1,0 +1,78 @@
+openapi: 3.2.0
+info:
+  title: BYBE Consumers API
+  version: v1
+  description: "\n Welcome to the BYBE API, V1.\n\n You can use this API to access our records of manufacturers,\n rebate offers, and products,\n as well as to validate redemptions for transactions and disburse payouts.\n\n Each route is documented below via the OpenAPI specification.\n Authorization details can be entered using the `Authorize` button on the right.\n "
+servers:
+- url: https://api.bybe.io
+  description: Base URL declared by the provider in apis.yml (roadmap#122).
+tags:
+- name: Consumers
+  description: A consumer purchases products and clips/redeems offers.
+paths:
+  /v1/consumers:
+    post:
+      summary: create a consumer
+      tags:
+      - Consumers
+      description: Creates a consumer object ahead of time, it is recommended to create consumers automatically by creating clips / redemptions instead.
+      security:
+      - basic_auth: []
+      parameters: []
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              example:
+                consumer:
+                  id: 1018350796
+                  retailer_identifier: your_consumers_id
+                  created_at: '2026-06-17T13:55:39.350Z'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - consumer
+              properties:
+                consumer:
+                  type: object
+                  required:
+                  - retailer_identifier
+                  properties:
+                    retailer_identifier:
+                      type: string
+                    payout_email_override:
+                      type: string
+  /v1/consumers/{retailer_identifier}:
+    parameters:
+    - name: retailer_identifier
+      in: path
+      description: the retailer identifier of the consumer that was sent with the clip or redemption requests
+      required: true
+      schema:
+        type: string
+    get:
+      summary: show consumer
+      tags:
+      - Consumers
+      security:
+      - basic_auth: []
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              example:
+                consumer:
+                  id: 980190962
+                  retailer_identifier: RETAILERCONSUMERID
+                  created_at: '2026-06-17T13:55:38.873Z'
+components:
+  securitySchemes:
+    basic_auth:
+      type: http
+      scheme: basic
+      description: "\n Use your API key (token) and your API secret for username and password respectively.\n\n You can get these credentials, or generate new ones, on your developer page.\n\n You should encode your `Authorization:` header value in base64 as `api_key:api_secret`.\n (This will be shown as a curl request for you if you use the 'try it out' feature on this page while authorized.)\n "

@@ -1,0 +1,851 @@
+openapi: 3.2.0
+info:
+  title: BYBE Redemptions API
+  version: v1
+  description: "\n Welcome to the BYBE API, V1.\n\n You can use this API to access our records of manufacturers,\n rebate offers, and products,\n as well as to validate redemptions for transactions and disburse payouts.\n\n Each route is documented below via the OpenAPI specification.\n Authorization details can be entered using the `Authorize` button on the right.\n "
+servers:
+- url: https://api.bybe.io
+  description: Base URL declared by the provider in apis.yml (roadmap#122).
+tags:
+- name: Redemptions
+  description: Redemptions are created to disburse money to a consumer for their specific purchases.
+paths:
+  /v1/redemption_disbursements:
+    get:
+      summary: list redemption disbursements
+      tags:
+      - Redemptions
+      security:
+      - basic_auth: []
+      description: This endpoint retrieves all redemption disbursements with the ability to filter by retailer consumer ID.
+      parameters:
+      - name: page
+        in: query
+        required: false
+        description: Page of results to return
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Number of redemption disbursements per page
+        schema:
+          type: integer
+      - name: consumer_retailer_identifier
+        in: query
+        required: false
+        description: Filter by a retailer consumer ID.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successfully list redemption disbursements
+          content:
+            application/json:
+              examples:
+                unfiltered list of redemption disbursements:
+                  value:
+                    redemption_disbursements:
+                    - id: 980190962
+                      status: pending
+                      retailer_identifier: RETAILERREDEMPTIONID
+                      payment_method: closed_loop_card
+                      amount_cents: 300
+                      amount_currency: USD
+                      email: email@example.com
+                      card_redemption_url: null
+                      card_expiration: null
+                      created_at: '2026-06-17T13:55:38.925Z'
+                      updated_at: '2026-06-17T13:55:38.925Z'
+                      consumer:
+                        id: 980190962
+                        retailer_identifier: RETAILERCONSUMERID
+                        created_at: '2026-06-17T13:55:38.873Z'
+                      redemptions:
+                      - id: 980190962
+                        status: accepted
+                        offer:
+                          id: 980190962
+                          name: Holiday sale on spirits
+                          image_url: thing.jpg
+                          discount_cents: 300
+                        payment_method: closed_loop_card
+                        redemptions_remaining: 0
+                    meta:
+                      current_page: 1
+                      total_pages: 1
+                      per_page_limit: 5000
+                      total_records: 1
+                      count: 1
+    post:
+      summary: create a redemption disbursement
+      tags:
+      - Redemptions
+      description: This endpoint allows the creation of a new redemption disbursement for a consumer. BYBE will run the purchase data through its rules engine to determine whether the offers applied to the purchase line items are valid. Redemptions will be created for each valid offer and line item combination, and BYBE will disburse money totaling the value of only the valid redemptions.
+      security:
+      - basic_auth: []
+      parameters:
+      - name: ignore_unknown_upcs
+        in: query
+        required: false
+        description: Whether to ignore unknown UPCs during redemption processing. Default is false.
+        schema:
+          type: boolean
+      responses:
+        '201':
+          description: Created a redemption disbursement, check the response for the status of each redemption created in this disbursement.
+          content:
+            application/json:
+              examples:
+                '201: Accepted: Creates a single redemption disbursement successfully':
+                  value:
+                    redemption_disbursement:
+                      id: 980190963
+                      status: pending
+                      retailer_identifier: my_consumers_redeption_disbursement_1
+                      payment_method: payout_flow
+                      amount_cents: 300
+                      amount_currency: USD
+                      email: example_consumer@example.bybe.com
+                      redemptions:
+                      - id: 980190963
+                        status: accepted
+                        payment_method: payout_flow
+                        redemptions_remaining: 0
+                        per_consumer_limit_reached: true
+                        daily_redemptions_remaining: null
+                        daily_limit_reached: false
+                        purchase:
+                          id: 980190963
+                          retailer_identifier: my_purchase_identifier
+                        offer:
+                          id: 980190962
+                    warnings: {}
+                '201: Rejected: Rejects redemption when household limit is reached':
+                  value:
+                    redemption_disbursement:
+                      id: 980190965
+                      status: failed_no_redemptions
+                      retailer_identifier: 27a54a63-70d8-4f74-8d72-eeaef672fbfe
+                      payment_method: payout_flow
+                      amount_cents: 0
+                      amount_currency: USD
+                      email: example_consumer@example.bybe.com
+                      redemptions:
+                      - id: 980190965
+                        status: rejected_household_limit
+                        payment_method: payout_flow
+                        redemptions_remaining: 0
+                        per_consumer_limit_reached: true
+                        daily_redemptions_remaining: null
+                        daily_limit_reached: false
+                        purchase:
+                          id: 980190965
+                          retailer_identifier: BOUGHTTWOOFTWO
+                        offer:
+                          id: 36642025
+                    warnings: {}
+                '201: Accepted: Uses default payout_flow when payment method is missing':
+                  value:
+                    redemption_disbursement:
+                      id: 980190967
+                      status: pending
+                      retailer_identifier: my_consumers_redemption_disbursement_3
+                      payment_method: payout_flow
+                      amount_cents: 500
+                      amount_currency: USD
+                      email: example_consumer@example.bybe.com
+                      redemptions:
+                      - id: 980190969
+                        status: rejected_product_not_purchased
+                        payment_method: payout_flow
+                        redemptions_remaining: 1
+                        per_consumer_limit_reached: false
+                        daily_redemptions_remaining: null
+                        daily_limit_reached: false
+                        purchase:
+                          id: 980190967
+                          retailer_identifier: my_purchase_identifier
+                        offer:
+                          id: 36642025
+                      - id: 980190968
+                        status: accepted
+                        payment_method: payout_flow
+                        redemptions_remaining: 1
+                        per_consumer_limit_reached: false
+                        daily_redemptions_remaining: null
+                        daily_limit_reached: false
+                        purchase:
+                          id: 980190967
+                          retailer_identifier: my_purchase_identifier
+                        offer:
+                          id: 36642025
+                    warnings: {}
+                '201: Accepted: Forces payout_flow when override flag is set':
+                  value:
+                    redemption_disbursement:
+                      id: 980190969
+                      status: pending
+                      retailer_identifier: my_consumers_redeption_disbursement_3
+                      payment_method: payout_flow
+                      amount_cents: 500
+                      amount_currency: USD
+                      email: example_consumer@example.bybe.com
+                      redemptions:
+                      - id: 980190973
+                        status: rejected_product_not_purchased
+                        payment_method: payout_flow
+                        redemptions_remaining: 1
+                        per_consumer_limit_reached: false
+                        daily_redemptions_remaining: null
+                        daily_limit_reached: false
+                        purchase:
+                          id: 980190969
+                          retailer_identifier: my_purchase_identifier
+                        offer:
+                          id: 36642025
+                      - id: 980190972
+                        status: accepted
+                        payment_method: payout_flow
+                        redemptions_remaining: 1
+                        per_consumer_limit_reached: false
+                        daily_redemptions_remaining: null
+                        daily_limit_reached: false
+                        purchase:
+                          id: 980190969
+                          retailer_identifier: my_purchase_identifier
+                        offer:
+                          id: 36642025
+                    warnings: {}
+                '201: Accepted: Accepts two redemptions in a single request with separate line items':
+                  value:
+                    redemption_disbursement:
+                      id: 980190971
+                      status: pending
+                      retailer_identifier: my_consumers_redeption_disbursement_3
+                      payment_method: payout_flow
+                      amount_cents: 1000
+                      amount_currency: USD
+                      email: example_consumer@example.bybe.com
+                      redemptions:
+                      - id: 980190976
+                        status: accepted
+                        payment_method: payout_flow
+                        redemptions_remaining: 0
+                        per_consumer_limit_reached: true
+                        daily_redemptions_remaining: null
+                        daily_limit_reached: false
+                        purchase:
+                          id: 980190971
+                          retailer_identifier: my_purchase_identifier
+                        offer:
+                          id: 36642025
+                      - id: 980190977
+                        status: accepted
+                        payment_method: payout_flow
+                        redemptions_remaining: 0
+                        per_consumer_limit_reached: true
+                        daily_redemptions_remaining: null
+                        daily_limit_reached: false
+                        purchase:
+                          id: 980190971
+                          retailer_identifier: my_purchase_identifier
+                        offer:
+                          id: 36642025
+                    warnings: {}
+                '201: Accepted: Allows one redemption for a daily-limit offer':
+                  value:
+                    redemption_disbursement:
+                      id: 980190977
+                      status: pending
+                      retailer_identifier: daily_limit_one_purchase
+                      payment_method: payout_flow
+                      amount_cents: 100
+                      amount_currency: USD
+                      email: daily_limit@example.bybe.com
+                      redemptions:
+                      - id: 980190987
+                        status: accepted
+                        payment_method: payout_flow
+                        redemptions_remaining: 3
+                        per_consumer_limit_reached: false
+                        daily_redemptions_remaining: 0
+                        daily_limit_reached: true
+                        purchase:
+                          id: 980190977
+                          retailer_identifier: purchase_one
+                        offer:
+                          id: 545172206
+                    warnings: {}
+                '201: Accepted: Allows one redemption per day for daily-limit offer':
+                  value:
+                    redemption_disbursement:
+                      id: 980190979
+                      status: pending
+                      retailer_identifier: daily_limit_disbursement
+                      payment_method: payout_flow
+                      amount_cents: 200
+                      amount_currency: USD
+                      email: daily_limit@example.bybe.com
+                      redemptions:
+                      - id: 980190990
+                        status: accepted
+                        payment_method: payout_flow
+                        redemptions_remaining: 2
+                        per_consumer_limit_reached: false
+                        daily_redemptions_remaining: 0
+                        daily_limit_reached: true
+                        purchase:
+                          id: 980190980
+                          retailer_identifier: purchase_day1
+                        offer:
+                          id: 545172206
+                      - id: 980190991
+                        status: accepted
+                        payment_method: payout_flow
+                        redemptions_remaining: 2
+                        per_consumer_limit_reached: false
+                        daily_redemptions_remaining: 0
+                        daily_limit_reached: true
+                        purchase:
+                          id: 980190981
+                          retailer_identifier: purchase_day2
+                        offer:
+                          id: 545172206
+                    warnings: {}
+                '201: Accepted: Defaults daily-limit calculation to current day when purchase date is missing':
+                  value:
+                    redemption_disbursement:
+                      id: 980190981
+                      status: pending
+                      retailer_identifier: daily_limit_one_purchase
+                      payment_method: payout_flow
+                      amount_cents: 100
+                      amount_currency: USD
+                      email: daily_limit@example.bybe.com
+                      redemptions:
+                      - id: 980190993
+                        status: accepted
+                        payment_method: payout_flow
+                        redemptions_remaining: 3
+                        per_consumer_limit_reached: false
+                        daily_redemptions_remaining: 0
+                        daily_limit_reached: true
+                        purchase:
+                          id: 980190983
+                          retailer_identifier: purchase_one
+                        offer:
+                          id: 545172206
+                    warnings: {}
+                '201: Accepted: Ignores unknown UPCs when configured to do so':
+                  value:
+                    redemption_disbursement:
+                      id: 980190991
+                      status: pending
+                      retailer_identifier: my_consumers_redeption_disbursement_3
+                      payment_method: payout_flow
+                      amount_cents: 500
+                      amount_currency: USD
+                      email: example_consumer@example.bybe.com
+                      redemptions:
+                      - id: 980191007
+                        status: accepted
+                        payment_method: payout_flow
+                        redemptions_remaining: 1
+                        per_consumer_limit_reached: false
+                        daily_redemptions_remaining: null
+                        daily_limit_reached: false
+                        purchase:
+                          id: 980190997
+                          retailer_identifier: my_purchase_identifier
+                        offer:
+                          id: 36642025
+                    warnings:
+                      unknown_upcs:
+                      - Unknown upcs 235252362363262, 34634634122352
+        '422':
+          description: unprocessable entity
+          content:
+            application/json:
+              examples:
+                '422: Error: Returns a 422 for unknown UPCs when ignore_unknown_upcs is not passed or false':
+                  value:
+                    redemption_disbursement:
+                      errors:
+                        unknown_upcs:
+                        - Unknown upcs 929352935829352935
+                '422: Error: Always returns a 422 for unknown retailer identifiers':
+                  value:
+                    redemption_disbursement:
+                      errors:
+                        unknown_retailer_identifiers:
+                        - Unknown retailer identifiers 929352935829352935
+                '422: Error: Returns a error for both invalid purchase date format and unknown UPCs':
+                  value:
+                    redemption_disbursement:
+                      errors:
+                        purchase_date:
+                        - 'Purchase date Invalid purchase date format: not-a-date'
+                        unknown_upcs:
+                        - Unknown upcs 76767675457467676
+                '422: Error: Returns error if purchase_date is incorrectly formatted':
+                  value:
+                    redemption_disbursement:
+                      errors:
+                        purchase_date:
+                        - 'Purchase date Invalid purchase date format: not-a-date'
+                '422: Error: Returns error if payment method is not valid':
+                  value:
+                    redemption_disbursement:
+                      errors:
+                        payment_method:
+                        - must exist
+                        - can't be blank
+                        - must be present
+                        purchases.store:
+                        - must exist
+                        - can't be blank
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - redemption_disbursement
+              properties:
+                redemption_disbursement:
+                  type: object
+                  required:
+                  - retailer_identifier
+                  - consumer
+                  - purchases
+                  properties:
+                    payment_method:
+                      type: string
+                      description: The method by which the consumer wishes to receive their disbursement. The recommended value is 'payout_flow' (this is also the default when not provided), which allows the consumer to accrue a balance and choose their preferred payment method. Supported values may vary by retailer. Please contact your BYBE representative to confirm which values are enabled for your retailer.
+                    retailer_identifier:
+                      type: string
+                      description: Unique retailer ID for the redemption disbursement.
+                    email:
+                      type: string
+                      description: The email address to send the disbursement email to. If the consumer's email was already provided during consumer creation using the Consumers or Clips API, then it is not required to be sent again in this request.
+                    consumer:
+                      type: object
+                      required:
+                      - retailer_identifier
+                      properties:
+                        retailer_identifier:
+                          type: string
+                    purchases:
+                      type: array
+                      description: A list of Purchase objects from which redemptions will be generated for inclusion in this redemption disbursement.
+                      items:
+                        type: object
+                        properties:
+                          retailer_identifier:
+                            description: Unique retailer ID for the purchase. Typically this would be your internal purchase ID or transaction ID.
+                            type: string
+                          purchase_date:
+                            type: string
+                            description: The date of the purchase in ISO 8601 format, preferably in the timezone of the store (e.g., "2023-10-01T08:00:00-04:00"). This is optional and defaults to the current time if not provided.
+                          store:
+                            type: object
+                            description: Store information where the purchase was made. This must match to a store sent to BYBE previously and will be used for validating redemptions.
+                            properties:
+                              retailer_identifier:
+                                type: string
+                          redemptions:
+                            type: array
+                            description: A list of offers to attempt to redeem against this purchase. If wanting to redeem multiple times for the same offer most include multiple entries for the same offer ID.
+                            items:
+                              type: object
+                              properties:
+                                offer_id:
+                                  type: integer
+                          line_items:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                product:
+                                  type: object
+                                  description: Product information used for validating redemptions. One of `upc` or `retailer_identifier` is required. `upc` is the preferred identifier. If using `retailer_identifier`, you must provide your custom product codes (e.g., SKUs) to BYBE in advance.
+                                  properties:
+                                    upc:
+                                      type: string
+                                      description: Universal Product Code. Preferred identifier for products.
+                                    retailer_identifier:
+                                      type: string
+                                      description: Custom product code (e.g., SKU). Must be pre-registered with BYBE.
+                                quantity:
+                                  type: integer
+                                price_cents:
+                                  type: integer
+            examples:
+              '201: Accepted: Creates a single redemption disbursement successfully':
+                summary: '201: Accepted: Creates a single redemption disbursement successfully'
+                value:
+                  redemption_disbursement:
+                    payment_method: payout_flow
+                    retailer_identifier: my_consumers_redeption_disbursement_1
+                    email: example_consumer@example.bybe.com
+                    consumer:
+                      retailer_identifier: ANOTHER_RETAILER_CONSUMER
+                    purchases:
+                    - retailer_identifier: my_purchase_identifier
+                      store:
+                        retailer_identifier: CBUS
+                      redemptions:
+                      - offer_id: 980190962
+                      line_items:
+                      - product:
+                          retailer_identifier: 123ABC
+                        quantity: 1
+                        price_cents: 999
+              '201: Rejected: Rejects redemption when household limit is reached':
+                summary: '201: Rejected: Rejects redemption when household limit is reached'
+                value:
+                  redemption_disbursement:
+                    payment_method: payout_flow
+                    retailer_identifier: 27a54a63-70d8-4f74-8d72-eeaef672fbfe
+                    email: example_consumer@example.bybe.com
+                    consumer:
+                      retailer_identifier: ANOTHER_RETAILER_CONSUMER_TWO
+                    purchases:
+                    - retailer_identifier: BOUGHTTWOOFTWO
+                      store:
+                        retailer_identifier: CHI
+                      redemptions:
+                      - offer_id: 36642025
+                      line_items:
+                      - product:
+                          retailer_identifier: 456DEF
+                        quantity: 1
+                        price_cents: 999
+              '201: Accepted: Uses default payout_flow when payment method is missing':
+                summary: '201: Accepted: Uses default payout_flow when payment method is missing'
+                value:
+                  redemption_disbursement:
+                    payment_method: payout_flow
+                    retailer_identifier: my_consumers_redemption_disbursement_3
+                    email: example_consumer@example.bybe.com
+                    consumer:
+                      retailer_identifier: ANOTHER_RETAILER_CONSUMER
+                    purchases:
+                    - retailer_identifier: my_purchase_identifier
+                      store:
+                        retailer_identifier: 0000Valid
+                      redemptions:
+                      - offer_id: 36642025
+                      - offer_id: 36642025
+                      line_items:
+                      - product:
+                          upc: '767676767676'
+                        quantity: 1
+                        price_cents: 999
+                      - product:
+                          upc: '767676767676'
+                        quantity: 1
+                        price_cents: 999
+              '201: Accepted: Forces payout_flow when override flag is set':
+                summary: '201: Accepted: Forces payout_flow when override flag is set'
+                value:
+                  redemption_disbursement:
+                    payment_method: payout_flow
+                    retailer_identifier: my_consumers_redeption_disbursement_3
+                    email: example_consumer@example.bybe.com
+                    consumer:
+                      retailer_identifier: ANOTHER_RETAILER_CONSUMER
+                    purchases:
+                    - retailer_identifier: my_purchase_identifier
+                      store:
+                        retailer_identifier: 0000Valid
+                      redemptions:
+                      - offer_id: 36642025
+                      - offer_id: 36642025
+                      line_items:
+                      - product:
+                          upc: '767676767676'
+                        quantity: 1
+                        price_cents: 999
+                      - product:
+                          upc: '767676767676'
+                        quantity: 1
+                        price_cents: 999
+              '201: Accepted: Accepts two redemptions in a single request with separate line items':
+                summary: '201: Accepted: Accepts two redemptions in a single request with separate line items'
+                value:
+                  redemption_disbursement:
+                    payment_method: payout_flow
+                    retailer_identifier: my_consumers_redeption_disbursement_3
+                    email: example_consumer@example.bybe.com
+                    consumer:
+                      retailer_identifier: ANOTHER_RETAILER_CONSUMER
+                    purchases:
+                    - retailer_identifier: my_purchase_identifier
+                      store:
+                        retailer_identifier: 0000Valid
+                      redemptions:
+                      - offer_id: 36642025
+                      - offer_id: 36642025
+                      line_items:
+                      - product:
+                          upc: '767676767676'
+                        quantity: 1
+                        price_cents: 999
+                      - product:
+                          upc: '989898989898'
+                        quantity: 3
+                        price_cents: 999
+              '201: Accepted: Allows one redemption for a daily-limit offer':
+                summary: '201: Accepted: Allows one redemption for a daily-limit offer'
+                value:
+                  redemption_disbursement:
+                    payment_method: payout_flow
+                    retailer_identifier: daily_limit_one_purchase
+                    email: daily_limit@example.bybe.com
+                    consumer:
+                      retailer_identifier: ANOTHER_RETAILER_CONSUMER
+                    purchases:
+                    - retailer_identifier: purchase_one
+                      purchase_date: '2023-10-01T12:00:00-04:00'
+                      store:
+                        retailer_identifier: 0000Valid
+                      redemptions:
+                      - offer_id: 545172206
+                      line_items:
+                      - product:
+                          upc: '767676767676'
+                        quantity: 1
+              '201: Accepted: Allows one redemption per day for daily-limit offer':
+                summary: '201: Accepted: Allows one redemption per day for daily-limit offer'
+                value:
+                  redemption_disbursement:
+                    payment_method: payout_flow
+                    retailer_identifier: daily_limit_disbursement
+                    email: daily_limit@example.bybe.com
+                    consumer:
+                      retailer_identifier: ANOTHER_RETAILER_CONSUMER
+                    purchases:
+                    - retailer_identifier: purchase_day1
+                      purchase_date: '2023-10-01T10:00:00-04:00'
+                      store:
+                        retailer_identifier: 0000Valid
+                      redemptions:
+                      - offer_id: 545172206
+                      line_items:
+                      - product:
+                          upc: '767676767676'
+                        quantity: 1
+                    - retailer_identifier: purchase_day2
+                      purchase_date: '2023-10-02T10:00:00-04:00'
+                      store:
+                        retailer_identifier: 0000Valid
+                      redemptions:
+                      - offer_id: 545172206
+                      line_items:
+                      - product:
+                          upc: '767676767676'
+                        quantity: 1
+              '201: Accepted: Defaults daily-limit calculation to current day when purchase date is missing':
+                summary: '201: Accepted: Defaults daily-limit calculation to current day when purchase date is missing'
+                value:
+                  redemption_disbursement:
+                    payment_method: payout_flow
+                    retailer_identifier: daily_limit_one_purchase
+                    email: daily_limit@example.bybe.com
+                    consumer:
+                      retailer_identifier: ANOTHER_RETAILER_CONSUMER
+                    purchases:
+                    - retailer_identifier: purchase_one
+                      store:
+                        retailer_identifier: 0000Valid
+                      redemptions:
+                      - offer_id: 545172206
+                      line_items:
+                      - product:
+                          upc: '767676767676'
+                        quantity: 1
+              '201: Accepted: Ignores unknown UPCs when configured to do so':
+                summary: '201: Accepted: Ignores unknown UPCs when configured to do so'
+                value:
+                  redemption_disbursement:
+                    payment_method: payout_flow
+                    retailer_identifier: my_consumers_redeption_disbursement_3
+                    email: example_consumer@example.bybe.com
+                    consumer:
+                      retailer_identifier: ANOTHER_RETAILER_CONSUMER
+                    purchases:
+                    - retailer_identifier: my_purchase_identifier
+                      store:
+                        retailer_identifier: 0000Valid
+                      redemptions:
+                      - offer_id: 36642025
+                      line_items:
+                      - product:
+                          upc: '767676767676'
+                        quantity: 3
+                        price_cents: 999
+                      - product:
+                          upc: '235252362363262'
+                        quantity: 3
+                        price_cents: 999
+                      - product:
+                          upc: '34634634122352'
+                        quantity: 3
+                        price_cents: 999
+              '422: Error: Returns a 422 for unknown UPCs when ignore_unknown_upcs is not passed or false':
+                summary: '422: Error: Returns a 422 for unknown UPCs when ignore_unknown_upcs is not passed or false'
+                value:
+                  redemption_disbursement:
+                    payment_method: payout_flow
+                    retailer_identifier: 0f73ef1b-4ed0-4cc2-afe4-b51eadf9c79e
+                    email: example_consumer@example.bybe.com
+                    consumer:
+                      retailer_identifier: ANOTHER_RETAILER_CONSUMER_TWO
+                    purchases:
+                    - retailer_identifier: BOUGHTTWOOFTWO
+                      store:
+                        retailer_identifier: CHI
+                      redemptions:
+                      - offer_id: 36642025
+                      line_items:
+                      - product:
+                          upc: '929352935829352935'
+                        quantity: 1
+                        price_cents: 999
+              '422: Error: Always returns a 422 for unknown retailer identifiers':
+                summary: '422: Error: Always returns a 422 for unknown retailer identifiers'
+                value:
+                  redemption_disbursement:
+                    payment_method: payout_flow
+                    retailer_identifier: 9792fdc8-c7e4-4fd0-a3d8-be1800f55c7f
+                    email: example_consumer@example.bybe.com
+                    consumer:
+                      retailer_identifier: ANOTHER_RETAILER_CONSUMER_TWO
+                    purchases:
+                    - retailer_identifier: BOUGHTTWOOFTWO
+                      store:
+                        retailer_identifier: CHI
+                      redemptions:
+                      - offer_id: 36642025
+                      line_items:
+                      - product:
+                          retailer_identifier: '929352935829352935'
+                        quantity: 1
+                        price_cents: 999
+              '422: Error: Returns a error for both invalid purchase date format and unknown UPCs':
+                summary: '422: Error: Returns a error for both invalid purchase date format and unknown UPCs'
+                value:
+                  redemption_disbursement:
+                    payment_method: payout_flow
+                    retailer_identifier: bad_date_disbursement
+                    email: bad_date@example.bybe.com
+                    consumer:
+                      retailer_identifier: ANOTHER_RETAILER_CONSUMER
+                    purchases:
+                    - retailer_identifier: bad_date_purchase
+                      purchase_date: not-a-date
+                      store:
+                        retailer_identifier: 0000Valid
+                      redemptions:
+                      - offer_id: 36642025
+                      line_items:
+                      - product:
+                          upc: '76767675457467676'
+                        quantity: 1
+              '422: Error: Returns error if purchase_date is incorrectly formatted':
+                summary: '422: Error: Returns error if purchase_date is incorrectly formatted'
+                value:
+                  redemption_disbursement:
+                    payment_method: payout_flow
+                    retailer_identifier: bad_date_disbursement
+                    email: bad_date@example.bybe.com
+                    consumer:
+                      retailer_identifier: ANOTHER_RETAILER_CONSUMER
+                    purchases:
+                    - retailer_identifier: bad_date_purchase
+                      purchase_date: not-a-date
+                      store:
+                        retailer_identifier: 0000Valid
+                      redemptions:
+                      - offer_id: 36642025
+                      line_items:
+                      - product:
+                          upc: '767676767676'
+                        quantity: 1
+              '422: Error: Returns error if payment method is not valid':
+                summary: '422: Error: Returns error if payment method is not valid'
+                value:
+                  redemption_disbursement:
+                    payment_method: invalid_payment_method
+                    retailer_identifier: bad_payment_method_disbursement
+                    email: bad_payment_method@example.bybe.com
+                    consumer:
+                      retailer_identifier: ANOTHER_RETAILER_CONSUMER
+                    purchases:
+                    - retailer_identifier: bad_payment_method_purchase
+                      store:
+                        retailer_identifier: 0000Valid
+                      redemptions:
+                      - offer_id: 36642025
+                      line_items:
+                      - product:
+                          upc: '767676767676'
+                        quantity: 1
+        required: true
+  /v1/redemption_disbursements/{id}:
+    parameters:
+    - name: id
+      in: path
+      description: redemption_disbursement_id
+      required: true
+      schema:
+        type: string
+    get:
+      summary: show a redemption disbursement
+      tags:
+      - Redemptions
+      security:
+      - basic_auth: []
+      description: This endpoint retrieves a specific redemption disbursement.
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              examples:
+                test_example:
+                  value:
+                    redemption_disbursement:
+                      id: 980190962
+                      status: pending
+                      retailer_identifier: RETAILERREDEMPTIONID
+                      payment_method: closed_loop_card
+                      amount_cents: 300
+                      amount_currency: USD
+                      email: email@example.com
+                      card_redemption_url: null
+                      card_expiration: null
+                      created_at: '2026-06-17T13:55:38.925Z'
+                      updated_at: '2026-06-17T13:55:38.925Z'
+                      consumer:
+                        id: 980190962
+                        retailer_identifier: RETAILERCONSUMERID
+                        created_at: '2026-06-17T13:55:38.873Z'
+                      redemptions:
+                      - id: 980190962
+                        status: accepted
+                        offer:
+                          id: 980190962
+                          name: Holiday sale on spirits
+                          image_url: thing.jpg
+                          discount_cents: 300
+                        payment_method: closed_loop_card
+                        redemptions_remaining: 0
+components:
+  securitySchemes:
+    basic_auth:
+      type: http
+      scheme: basic
+      description: "\n Use your API key (token) and your API secret for username and password respectively.\n\n You can get these credentials, or generate new ones, on your developer page.\n\n You should encode your `Authorization:` header value in base64 as `api_key:api_secret`.\n (This will be shown as a curl request for you if you use the 'try it out' feature on this page while authorized.)\n "

@@ -1,0 +1,241 @@
+openapi: 3.2.0
+info:
+  title: BYBE Products API
+  version: v1
+  description: "\n Welcome to the BYBE API, V1.\n\n You can use this API to access our records of manufacturers,\n rebate offers, and products,\n as well as to validate redemptions for transactions and disburse payouts.\n\n Each route is documented below via the OpenAPI specification.\n Authorization details can be entered using the `Authorize` button on the right.\n "
+servers:
+- url: https://api.bybe.io
+  description: Base URL declared by the provider in apis.yml (roadmap#122).
+tags:
+- name: Products
+  description: A product is produced by a manufacturer and is featured in offers.
+paths:
+  /v1/products:
+    get:
+      summary: list products
+      tags:
+      - Products
+      security:
+      - basic_auth: []
+      parameters:
+      - name: page
+        in: query
+        required: false
+        description: Page of results to return
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Number of products per page
+        schema:
+          type: integer
+      - name: product_type_id
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: product_subtype_id
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: product_package_type_id
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: manufacturer_id
+        in: query
+        required: false
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: successfully list products
+          content:
+            application/json:
+              examples:
+                list all products:
+                  value:
+                    products:
+                    - id: 281110143
+                      name: 12 Pack of Beer
+                      price_cents: 1200
+                      price_currency: USD
+                      description: 12 cans of beer
+                      origin_locale: California
+                      origin_country: USA
+                      upcs:
+                      - '767676767676'
+                      image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                      package_unit_quantity: 1
+                      package_unit_volume: 12.0
+                      package_unit_volume_unit: fl oz
+                      retailer_identifier: 123ABC
+                      manufacturer:
+                        id: 1039554827
+                        name: AB InBev
+                        logo_image_url: https://s3.us-east-2.amazonaws.com/bybe-cdn/manufacturers/abinbev.png
+                      product_type:
+                        id: 418801326
+                        name: Beer
+                      product_subtype:
+                        id: 698662446
+                        name: Light Beer
+                      product_package_type:
+                        id: 591182547
+                        name: Can
+                    - id: 980190962
+                      name: Hard Apple Cider
+                      price_cents: 1200
+                      price_currency: USD
+                      description: A delicious hard apple cider, brewed to perfection.
+                      origin_locale: California
+                      origin_country: USA
+                      upcs:
+                      - '123123123123'
+                      image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                      package_unit_quantity: 1
+                      package_unit_volume: 12.0
+                      package_unit_volume_unit: fl oz
+                      retailer_identifier: 123ABC
+                      manufacturer:
+                        id: 1039554827
+                        name: AB InBev
+                        logo_image_url: https://s3.us-east-2.amazonaws.com/bybe-cdn/manufacturers/abinbev.png
+                      product_type:
+                        id: 935439881
+                        name: Cider
+                      product_subtype:
+                        id: 924165175
+                        name: Hard Cider
+                      product_package_type:
+                        id: 591182547
+                        name: Can
+                    - id: 298486374
+                      name: Soft Apple Cider
+                      price_cents: 1200
+                      price_currency: USD
+                      description: A delicious hard apple cider, brewed to perfection.
+                      origin_locale: California
+                      origin_country: USA
+                      upcs:
+                      - '123123123123'
+                      - '989898989898'
+                      image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                      package_unit_quantity: 1
+                      package_unit_volume: 12.0
+                      package_unit_volume_unit: fl oz
+                      retailer_identifier: 123ABC
+                      manufacturer:
+                        id: 1039554827
+                        name: AB InBev
+                        logo_image_url: https://s3.us-east-2.amazonaws.com/bybe-cdn/manufacturers/abinbev.png
+                      product_type:
+                        id: 935439881
+                        name: Cider
+                      product_subtype:
+                        id: 924165175
+                        name: Hard Cider
+                      product_package_type:
+                        id: 591182547
+                        name: Can
+                    meta:
+                      current_page: 1
+                      total_pages: 1
+                      per_page_limit: 5000
+                      total_records: 3
+                      count: 3
+                filter products by type:
+                  value:
+                    products:
+                    - id: 281110143
+                      name: 12 Pack of Beer
+                      price_cents: 1200
+                      price_currency: USD
+                      description: 12 cans of beer
+                      origin_locale: California
+                      origin_country: USA
+                      upcs:
+                      - '767676767676'
+                      image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                      package_unit_quantity: 1
+                      package_unit_volume: 12.0
+                      package_unit_volume_unit: fl oz
+                      retailer_identifier: 123ABC
+                      manufacturer:
+                        id: 1039554827
+                        name: AB InBev
+                        logo_image_url: https://s3.us-east-2.amazonaws.com/bybe-cdn/manufacturers/abinbev.png
+                      product_type:
+                        id: 418801326
+                        name: Beer
+                      product_subtype:
+                        id: 698662446
+                        name: Light Beer
+                      product_package_type:
+                        id: 591182547
+                        name: Can
+                    meta:
+                      current_page: 1
+                      total_pages: 1
+                      per_page_limit: 5000
+                      total_records: 1
+                      count: 1
+  /v1/products/{id}:
+    parameters:
+    - name: id
+      in: path
+      description: product_id
+      required: true
+      schema:
+        type: string
+    get:
+      summary: show a single product
+      tags:
+      - Products
+      security:
+      - basic_auth: []
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              examples:
+                test_example:
+                  value:
+                    product:
+                      id: 980190962
+                      name: Hard Apple Cider
+                      price_cents: 1200
+                      price_currency: USD
+                      description: A delicious hard apple cider, brewed to perfection.
+                      origin_locale: California
+                      origin_country: USA
+                      upcs:
+                      - '123123123123'
+                      image_url: https://s3.amazonaws.com/bybe-product-images/coppola-chardonnay.png
+                      package_unit_quantity: 1
+                      package_unit_volume: 12.0
+                      package_unit_volume_unit: fl oz
+                      retailer_identifier: 123ABC
+                      manufacturer:
+                        id: 1039554827
+                        name: AB InBev
+                        logo_image_url: https://s3.us-east-2.amazonaws.com/bybe-cdn/manufacturers/abinbev.png
+                      product_type:
+                        id: 935439881
+                        name: Cider
+                      product_subtype:
+                        id: 924165175
+                        name: Hard Cider
+                      product_package_type:
+                        id: 591182547
+                        name: Can
+components:
+  securitySchemes:
+    basic_auth:
+      type: http
+      scheme: basic
+      description: "\n Use your API key (token) and your API secret for username and password respectively.\n\n You can get these credentials, or generate new ones, on your developer page.\n\n You should encode your `Authorization:` header value in base64 as `api_key:api_secret`.\n (This will be shown as a curl request for you if you use the 'try it out' feature on this page while authorized.)\n "

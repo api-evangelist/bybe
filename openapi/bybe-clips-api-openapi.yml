@@ -1,0 +1,523 @@
+openapi: 3.2.0
+info:
+  title: BYBE Clips API
+  version: v1
+  description: "\n Welcome to the BYBE API, V1.\n\n You can use this API to access our records of manufacturers,\n rebate offers, and products,\n as well as to validate redemptions for transactions and disburse payouts.\n\n Each route is documented below via the OpenAPI specification.\n Authorization details can be entered using the `Authorize` button on the right.\n "
+servers:
+- url: https://api.bybe.io
+  description: Base URL declared by the provider in apis.yml (roadmap#122).
+tags:
+- name: Clips
+  description: A clip represents a consumer's intent to redeem an offer.
+paths:
+  /v1/clips:
+    get:
+      summary: list clips
+      tags:
+      - Clips
+      description: List clips, optionally filtering by offer_id, the consumer's retailer_identifier, or other options.
+      security:
+      - basic_auth: []
+      parameters:
+      - name: page
+        in: query
+        required: false
+        description: Page of results to return
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Number of clips per page
+        schema:
+          type: integer
+      - name: offer_id
+        in: query
+        required: false
+        description: Filter to a specific offer
+        schema:
+          type: integer
+      - name: consumer_retailer_identifier
+        in: query
+        required: false
+        description: Filter to a specific consumer
+        schema:
+          type: string
+      responses:
+        '200':
+          description: list of clips
+          content:
+            application/json:
+              examples:
+                unfiltered list of clips:
+                  value:
+                    clips:
+                    - id: 980190962
+                      consumer:
+                        id: 980190962
+                        retailer_identifier: RETAILERCONSUMERID
+                        created_at: '2026-06-17T13:55:38.873Z'
+                      retailer_identifier: 123ABC
+                      latitude: '10.12331'
+                      longitude: '-120.02332'
+                      created_at: '2026-06-17T13:55:38.862Z'
+                      offer:
+                        id: 980190962
+                        name: Holiday sale on spirits
+                        clip_limit: 5
+                        clips_remaining: -3
+                        budget_limit_cents: 2000
+                        budget_limit_currency: USD
+                        budget_remaining_cents: 1700
+                        budget_remaining_currency: USD
+                        discount_cents: 300
+                        discount_currency: USD
+                        conditions: Offer open to residents of KY. Must be 21 years of age.
+                        details: Offer details
+                        start_date: '2017-10-27T02:13:25.000Z'
+                        end_date: '2026-07-17T13:55:38.000Z'
+                        per_consumer_limit: 1
+                        redemptions_available: 10
+                        redemptions_remaining: 9
+                        offer_type: discount
+                        created_at: '2026-06-17T13:55:38.857Z'
+                        updated_at: '2026-06-17T13:55:38.857Z'
+                    - id: 1018350795
+                      consumer:
+                        id: 980190962
+                        retailer_identifier: RETAILERCONSUMERID
+                        created_at: '2026-06-17T13:55:38.873Z'
+                      retailer_identifier: 789ABC
+                      latitude: '10.12331'
+                      longitude: '-120.02332'
+                      created_at: '2026-06-17T13:55:38.862Z'
+                      offer:
+                        id: 621189049
+                        name: Buy one of these, get cash
+                        clip_limit: 5
+                        clips_remaining: 3
+                        budget_limit_cents: 2000
+                        budget_limit_currency: USD
+                        budget_remaining_cents: 2000
+                        budget_remaining_currency: USD
+                        discount_cents: 300
+                        discount_currency: USD
+                        conditions: Buy three in OH.
+                        details: Offer details
+                        start_date: '2017-10-27T02:13:25.000Z'
+                        end_date: '2026-07-17T13:55:38.000Z'
+                        per_consumer_limit: 1
+                        redemptions_available: 10
+                        redemptions_remaining: 10
+                        offer_type: discount
+                        created_at: '2026-06-17T13:55:38.857Z'
+                        updated_at: '2026-06-17T13:55:38.857Z'
+                    - id: 51848956
+                      consumer:
+                        id: 980190962
+                        retailer_identifier: RETAILERCONSUMERID
+                        created_at: '2026-06-17T13:55:38.873Z'
+                      retailer_identifier: 189DDD
+                      latitude: '10.12331'
+                      longitude: '-120.02332'
+                      created_at: '2026-06-17T13:55:38.862Z'
+                      offer:
+                        id: 955136116
+                        name: Beer Club
+                        clip_limit: 5
+                        clips_remaining: 3
+                        budget_limit_cents: 5000
+                        budget_limit_currency: USD
+                        budget_remaining_cents: 5000
+                        budget_remaining_currency: USD
+                        discount_cents: 500
+                        discount_currency: USD
+                        conditions: Buy 6 get 5 back
+                        details: Offer details
+                        start_date: '2017-10-27T02:13:25.000Z'
+                        end_date: '2026-07-17T13:55:38.000Z'
+                        per_consumer_limit: 1
+                        redemptions_available: 1
+                        redemptions_remaining: 1
+                        offer_type: club
+                        created_at: '2026-06-17T13:55:38.857Z'
+                        updated_at: '2026-06-17T13:55:38.857Z'
+                    - id: 374648174
+                      consumer:
+                        id: 980190962
+                        retailer_identifier: RETAILERCONSUMERID
+                        created_at: '2026-06-17T13:55:38.873Z'
+                      retailer_identifier: 189EEE
+                      latitude: '10.12331'
+                      longitude: '-120.02332'
+                      created_at: '2026-06-17T13:55:38.862Z'
+                      offer:
+                        id: 849914497
+                        name: Beer Club Two
+                        clip_limit: 5
+                        clips_remaining: 3
+                        budget_limit_cents: 5000
+                        budget_limit_currency: USD
+                        budget_remaining_cents: 5000
+                        budget_remaining_currency: USD
+                        discount_cents: 100
+                        discount_currency: USD
+                        conditions: Buy 2 get 1 back
+                        details: Offer details
+                        start_date: '2017-10-27T02:13:25.000Z'
+                        end_date: '2026-07-17T13:55:38.000Z'
+                        per_consumer_limit: 1
+                        redemptions_available: 1
+                        redemptions_remaining: 1
+                        offer_type: club
+                        created_at: '2026-06-17T13:55:38.857Z'
+                        updated_at: '2026-06-17T13:55:38.857Z'
+                    meta:
+                      current_page: 1
+                      total_pages: 1
+                      per_page_limit: 5000
+                      total_records: 4
+                      count: 4
+                list clips for a specific consumer:
+                  value:
+                    clips:
+                    - id: 980190962
+                      consumer:
+                        id: 980190962
+                        retailer_identifier: RETAILERCONSUMERID
+                        created_at: '2026-06-17T13:55:38.873Z'
+                      retailer_identifier: 123ABC
+                      latitude: '10.12331'
+                      longitude: '-120.02332'
+                      created_at: '2026-06-17T13:55:38.862Z'
+                      offer:
+                        id: 980190962
+                        name: Holiday sale on spirits
+                        clip_limit: 5
+                        clips_remaining: -3
+                        budget_limit_cents: 2000
+                        budget_limit_currency: USD
+                        budget_remaining_cents: 1700
+                        budget_remaining_currency: USD
+                        discount_cents: 300
+                        discount_currency: USD
+                        conditions: Offer open to residents of KY. Must be 21 years of age.
+                        details: Offer details
+                        start_date: '2017-10-27T02:13:25.000Z'
+                        end_date: '2026-07-17T13:55:38.000Z'
+                        per_consumer_limit: 1
+                        redemptions_available: 10
+                        redemptions_remaining: 9
+                        offer_type: discount
+                        created_at: '2026-06-17T13:55:38.857Z'
+                        updated_at: '2026-06-17T13:55:38.857Z'
+                    - id: 1018350795
+                      consumer:
+                        id: 980190962
+                        retailer_identifier: RETAILERCONSUMERID
+                        created_at: '2026-06-17T13:55:38.873Z'
+                      retailer_identifier: 789ABC
+                      latitude: '10.12331'
+                      longitude: '-120.02332'
+                      created_at: '2026-06-17T13:55:38.862Z'
+                      offer:
+                        id: 621189049
+                        name: Buy one of these, get cash
+                        clip_limit: 5
+                        clips_remaining: 3
+                        budget_limit_cents: 2000
+                        budget_limit_currency: USD
+                        budget_remaining_cents: 2000
+                        budget_remaining_currency: USD
+                        discount_cents: 300
+                        discount_currency: USD
+                        conditions: Buy three in OH.
+                        details: Offer details
+                        start_date: '2017-10-27T02:13:25.000Z'
+                        end_date: '2026-07-17T13:55:38.000Z'
+                        per_consumer_limit: 1
+                        redemptions_available: 10
+                        redemptions_remaining: 10
+                        offer_type: discount
+                        created_at: '2026-06-17T13:55:38.857Z'
+                        updated_at: '2026-06-17T13:55:38.857Z'
+                    - id: 51848956
+                      consumer:
+                        id: 980190962
+                        retailer_identifier: RETAILERCONSUMERID
+                        created_at: '2026-06-17T13:55:38.873Z'
+                      retailer_identifier: 189DDD
+                      latitude: '10.12331'
+                      longitude: '-120.02332'
+                      created_at: '2026-06-17T13:55:38.862Z'
+                      offer:
+                        id: 955136116
+                        name: Beer Club
+                        clip_limit: 5
+                        clips_remaining: 3
+                        budget_limit_cents: 5000
+                        budget_limit_currency: USD
+                        budget_remaining_cents: 5000
+                        budget_remaining_currency: USD
+                        discount_cents: 500
+                        discount_currency: USD
+                        conditions: Buy 6 get 5 back
+                        details: Offer details
+                        start_date: '2017-10-27T02:13:25.000Z'
+                        end_date: '2026-07-17T13:55:38.000Z'
+                        per_consumer_limit: 1
+                        redemptions_available: 1
+                        redemptions_remaining: 1
+                        offer_type: club
+                        created_at: '2026-06-17T13:55:38.857Z'
+                        updated_at: '2026-06-17T13:55:38.857Z'
+                    - id: 374648174
+                      consumer:
+                        id: 980190962
+                        retailer_identifier: RETAILERCONSUMERID
+                        created_at: '2026-06-17T13:55:38.873Z'
+                      retailer_identifier: 189EEE
+                      latitude: '10.12331'
+                      longitude: '-120.02332'
+                      created_at: '2026-06-17T13:55:38.862Z'
+                      offer:
+                        id: 849914497
+                        name: Beer Club Two
+                        clip_limit: 5
+                        clips_remaining: 3
+                        budget_limit_cents: 5000
+                        budget_limit_currency: USD
+                        budget_remaining_cents: 5000
+                        budget_remaining_currency: USD
+                        discount_cents: 100
+                        discount_currency: USD
+                        conditions: Buy 2 get 1 back
+                        details: Offer details
+                        start_date: '2017-10-27T02:13:25.000Z'
+                        end_date: '2026-07-17T13:55:38.000Z'
+                        per_consumer_limit: 1
+                        redemptions_available: 1
+                        redemptions_remaining: 1
+                        offer_type: club
+                        created_at: '2026-06-17T13:55:38.857Z'
+                        updated_at: '2026-06-17T13:55:38.857Z'
+                    meta:
+                      current_page: 1
+                      total_pages: 1
+                      per_page_limit: 5000
+                      total_records: 4
+                      count: 4
+                list clips for a specific offer:
+                  value:
+                    clips:
+                    - id: 1018350795
+                      consumer:
+                        id: 980190962
+                        retailer_identifier: RETAILERCONSUMERID
+                        created_at: '2026-06-17T13:55:38.873Z'
+                      retailer_identifier: 789ABC
+                      latitude: '10.12331'
+                      longitude: '-120.02332'
+                      created_at: '2026-06-17T13:55:38.862Z'
+                      offer:
+                        id: 621189049
+                        name: Buy one of these, get cash
+                        clip_limit: 5
+                        clips_remaining: 3
+                        budget_limit_cents: 2000
+                        budget_limit_currency: USD
+                        budget_remaining_cents: 2000
+                        budget_remaining_currency: USD
+                        discount_cents: 300
+                        discount_currency: USD
+                        conditions: Buy three in OH.
+                        details: Offer details
+                        start_date: '2017-10-27T02:13:25.000Z'
+                        end_date: '2026-07-17T13:55:38.000Z'
+                        per_consumer_limit: 1
+                        redemptions_available: 10
+                        redemptions_remaining: 10
+                        offer_type: discount
+                        created_at: '2026-06-17T13:55:38.857Z'
+                        updated_at: '2026-06-17T13:55:38.857Z'
+                    meta:
+                      current_page: 1
+                      total_pages: 1
+                      per_page_limit: 5000
+                      total_records: 1
+                      count: 1
+    post:
+      summary: create a clip
+      tags:
+      - Clips
+      description: A clip represents a consumer's intent to redeem an offer. Offer clip data will display in the BYBE dashboard to let your team know how many people intended to redeem the offer.
+      security:
+      - basic_auth: []
+      parameters: []
+      responses:
+        '201':
+          description: successfully created a clip
+          content:
+            application/json:
+              example:
+                clip:
+                  id: 1018350796
+                  retailer_identifier: your_clip_identifier
+                  latitude: '42.068443'
+                  longitude: '-81.195412'
+                  created_at: '2026-06-17T13:55:39.253Z'
+                  offer:
+                    id: 980190962
+                    name: Holiday sale on spirits
+                    budget_limit_cents: 2000
+                    budget_limit_currency: USD
+                    budget_remaining_cents: 1700
+                    budget_remaining_currency: USD
+                    discount_cents: 300
+                    discount_currency: USD
+                    conditions: Offer open to residents of KY. Must be 21 years of age.
+                    details: Offer details
+                    start_date: '2017-10-27T02:13:25.000Z'
+                    end_date: '2026-07-17T13:55:38.000Z'
+                    per_consumer_limit: 1
+                    redemptions_available: 10
+                    redemptions_remaining: 9
+                    offer_type:
+                      id: 568374289
+                      name: discount
+                      created_at: '2026-06-17T13:55:38.868Z'
+                      updated_at: '2026-06-17T13:55:38.868Z'
+                    created_at: '2026-06-17T13:55:38.857Z'
+                    updated_at: '2026-06-17T13:55:38.857Z'
+                  consumer:
+                    id: 113629430
+                    retailer_identifier: ANOTHER_RETAILER_CONSUMER
+                    created_at: '2026-06-17T13:55:38.873Z'
+        '303':
+          description: clip already exists for the same offer and consumer
+          content:
+            application/json:
+              example:
+                location: /v1/clips/980190962
+                clip:
+                  errors:
+                    retailer_identifier:
+                    - has already been taken
+                    duplicate_clip:
+                    - Duplicate clips are not permitted
+        '409':
+          description: a different clip already exists with this retailer_identifier
+          content:
+            application/json:
+              example:
+                clip:
+                  errors:
+                    retailer_identifier:
+                    - has already been taken
+        '422':
+          description: a required field is missing
+          content:
+            application/json:
+              example:
+                clip:
+                  errors:
+                    retailer_identifier:
+                    - can't be blank
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - clip
+              properties:
+                clip:
+                  type: object
+                  required:
+                  - offer_id
+                  - retailer_identifier
+                  properties:
+                    offer_id:
+                      type: integer
+                      description: The ID of the offer to clip
+                    retailer_identifier:
+                      type: string
+                      description: Your unique identifier for this clip
+                    consumer:
+                      type: object
+                      required:
+                      - retailer_identifier
+                      properties:
+                        retailer_identifier:
+                          type: string
+                        email:
+                          type: string
+                          description: The email address of the consumer clipping the offer
+                        payout_email_override:
+                          type: string
+                          description: An override email address for payout purposes if different from the consumer email. Only send this if the consumer specifically provided a different email for BYBE rebates
+                    latitude:
+                      type: number
+                      minimum: -90
+                      maximum: 90
+                    longitude:
+                      type: number
+                      minimum: -180
+                      maximum: 180
+  /v1/clips/{id}:
+    parameters:
+    - name: id
+      in: path
+      description: id of the clip
+      required: true
+      schema:
+        type: string
+    get:
+      summary: show clip
+      tags:
+      - Clips
+      security:
+      - basic_auth: []
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              example:
+                clip:
+                  id: 980190962
+                  consumer:
+                    id: 980190962
+                    retailer_identifier: RETAILERCONSUMERID
+                    created_at: '2026-06-17T13:55:38.873Z'
+                  retailer_identifier: 123ABC
+                  latitude: '10.12331'
+                  longitude: '-120.02332'
+                  created_at: '2026-06-17T13:55:38.862Z'
+                  offer:
+                    id: 980190962
+                    name: Holiday sale on spirits
+                    clip_limit: 5
+                    clips_remaining: -3
+                    budget_limit_cents: 2000
+                    budget_limit_currency: USD
+                    budget_remaining_cents: 1700
+                    budget_remaining_currency: USD
+                    discount_cents: 300
+                    discount_currency: USD
+                    conditions: Offer open to residents of KY. Must be 21 years of age.
+                    details: Offer details
+                    start_date: '2017-10-27T02:13:25.000Z'
+                    end_date: '2026-07-17T13:55:38.000Z'
+                    per_consumer_limit: 1
+                    redemptions_available: 10
+                    redemptions_remaining: 9
+                    offer_type: discount
+                    created_at: '2026-06-17T13:55:38.857Z'
+                    updated_at: '2026-06-17T13:55:38.857Z'
+components:
+  securitySchemes:
+    basic_auth:
+      type: http
+      scheme: basic
+      description: "\n Use your API key (token) and your API secret for username and password respectively.\n\n You can get these credentials, or generate new ones, on your developer page.\n\n You should encode your `Authorization:` header value in base64 as `api_key:api_secret`.\n (This will be shown as a curl request for you if you use the 'try it out' feature on this page while authorized.)\n "

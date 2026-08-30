@@ -1,0 +1,82 @@
+openapi: 3.2.0
+info:
+  title: BYBE Manufacturers API
+  version: v1
+  description: "\n Welcome to the BYBE API, V1.\n\n You can use this API to access our records of manufacturers,\n rebate offers, and products,\n as well as to validate redemptions for transactions and disburse payouts.\n\n Each route is documented below via the OpenAPI specification.\n Authorization details can be entered using the `Authorize` button on the right.\n "
+servers:
+- url: https://api.bybe.io
+  description: Base URL declared by the provider in apis.yml (roadmap#122).
+tags:
+- name: Manufacturers
+  description: A manufacturer represents a company or organization that produces alcoholic beverages.
+paths:
+  /v1/manufacturers:
+    get:
+      summary: list manufacturers
+      tags:
+      - Manufacturers
+      security:
+      - basic_auth: []
+      parameters:
+      - name: page
+        in: query
+        required: false
+        description: Page of results to return
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Number of manufacturers per page
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: successfully list manufacturers
+          content:
+            application/json:
+              examples:
+                list all manufacturers:
+                  value:
+                    manufacturers:
+                    - id: 1039554827
+                      name: AB InBev
+                      logo_image_url: https://s3.us-east-2.amazonaws.com/bybe-cdn/manufacturers/abinbev.png
+                    meta:
+                      current_page: 1
+                      total_pages: 1
+                      per_page_limit: 5000
+                      total_records: 1
+                      count: 1
+  /v1/manufacturers/{id}:
+    parameters:
+    - name: id
+      in: path
+      description: manufacturer_id
+      required: true
+      schema:
+        type: string
+    get:
+      summary: show a manufacturer
+      tags:
+      - Manufacturers
+      security:
+      - basic_auth: []
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              examples:
+                test_example:
+                  value:
+                    manufacturer:
+                      id: 1039554827
+                      name: AB InBev
+                      logo_image_url: https://s3.us-east-2.amazonaws.com/bybe-cdn/manufacturers/abinbev.png
+components:
+  securitySchemes:
+    basic_auth:
+      type: http
+      scheme: basic
+      description: "\n Use your API key (token) and your API secret for username and password respectively.\n\n You can get these credentials, or generate new ones, on your developer page.\n\n You should encode your `Authorization:` header value in base64 as `api_key:api_secret`.\n (This will be shown as a curl request for you if you use the 'try it out' feature on this page while authorized.)\n "
