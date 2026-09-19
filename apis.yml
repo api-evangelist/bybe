@@ -101,6 +101,8 @@ apis:
   humanURL: https://docs.bybe.io/
   baseURL: https://api.bybe.io
   tags:
+  - Manufacturer
+  tags_raw:
   - Manufacturers
   properties:
   - type: OpenAPI
