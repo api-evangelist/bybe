@@ -1,0 +1,32 @@
+{
+  "provider": "bybe",
+  "sources": [
+    "_original/bybe-api-openapi-original.yml"
+  ],
+  "outputs": [
+    "bybe-clips-api-openapi.yml",
+    "bybe-consumers-api-openapi.yml",
+    "bybe-manufacturers-api-openapi.yml",
+    "bybe-offers-api-openapi.yml",
+    "bybe-products-api-openapi.yml",
+    "bybe-redemptions-api-openapi.yml",
+    "bybe-stores-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "bybe-api-openapi-original.yml: upgraded openapi 3.0.1 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "bybe-clips-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "bybe-consumers-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "bybe-manufacturers-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "bybe-offers-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "bybe-products-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "bybe-redemptions-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "bybe-stores-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}

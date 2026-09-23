@@ -2,7 +2,19 @@ openapi: 3.2.0
 info:
   title: BYBE Manufacturers API
   version: v1
-  description: "\n Welcome to the BYBE API, V1.\n\n You can use this API to access our records of manufacturers,\n rebate offers, and products,\n as well as to validate redemptions for transactions and disburse payouts.\n\n Each route is documented below via the OpenAPI specification.\n Authorization details can be entered using the `Authorize` button on the right.\n "
+  description: 'Welcome to the BYBE API, V1.
+
+
+    You can use this API to access our records of manufacturers,
+
+    rebate offers, and products,
+
+    as well as to validate redemptions for transactions and disburse payouts.
+
+
+    Each route is documented below via the OpenAPI specification.
+
+    Authorization details can be entered using the `Authorize` button on the right.'
 servers:
 - url: https://api.bybe.io
   description: Base URL declared by the provider in apis.yml (roadmap#122).
@@ -48,6 +60,8 @@ paths:
                       per_page_limit: 5000
                       total_records: 1
                       count: 1
+      operationId: getV1Manufacturers
+      x-operation-id-source: derived
   /v1/manufacturers/{id}:
     parameters:
     - name: id
@@ -74,6 +88,8 @@ paths:
                       id: 1039554827
                       name: AB InBev
                       logo_image_url: https://s3.us-east-2.amazonaws.com/bybe-cdn/manufacturers/abinbev.png
+      operationId: getV1ManufacturersById
+      x-operation-id-source: derived
 components:
   securitySchemes:
     basic_auth:

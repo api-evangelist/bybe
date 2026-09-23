@@ -8,6 +8,9 @@ info:
     redemptions for transactions and disburse payouts.\n\n Each route is documented
     below via the OpenAPI specification.\n Authorization details can be entered using
     the `Authorize` button on the right.\n "
+servers:
+- url: https://api.bybe.io
+  description: Base URL declared by the provider in apis.yml (roadmap#122).
 paths:
   "/v1/clips":
     get:

@@ -2,7 +2,19 @@ openapi: 3.2.0
 info:
   title: BYBE Consumers API
   version: v1
-  description: "\n Welcome to the BYBE API, V1.\n\n You can use this API to access our records of manufacturers,\n rebate offers, and products,\n as well as to validate redemptions for transactions and disburse payouts.\n\n Each route is documented below via the OpenAPI specification.\n Authorization details can be entered using the `Authorize` button on the right.\n "
+  description: 'Welcome to the BYBE API, V1.
+
+
+    You can use this API to access our records of manufacturers,
+
+    rebate offers, and products,
+
+    as well as to validate redemptions for transactions and disburse payouts.
+
+
+    Each route is documented below via the OpenAPI specification.
+
+    Authorization details can be entered using the `Authorize` button on the right.'
 servers:
 - url: https://api.bybe.io
   description: Base URL declared by the provider in apis.yml (roadmap#122).
@@ -46,6 +58,8 @@ paths:
                       type: string
                     payout_email_override:
                       type: string
+      operationId: postV1Consumers
+      x-operation-id-source: derived
   /v1/consumers/{retailer_identifier}:
     parameters:
     - name: retailer_identifier
@@ -70,6 +84,8 @@ paths:
                   id: 980190962
                   retailer_identifier: RETAILERCONSUMERID
                   created_at: '2026-06-17T13:55:38.873Z'
+      operationId: getV1ConsumersByRetailerIdentifier
+      x-operation-id-source: derived
 components:
   securitySchemes:
     basic_auth:
