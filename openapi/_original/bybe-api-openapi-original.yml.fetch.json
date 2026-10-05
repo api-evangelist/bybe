@@ -1,0 +1,12 @@
+{
+ "url": "https://api.bybe.io/v1/swagger.yaml",
+ "requested_url": "https://api.bybe.io/v1/swagger.yaml",
+ "status": 200,
+ "content_type": "text/yaml",
+ "bytes": 167837,
+ "sha256": "757d871687c72f53d42fdccf43d1901005351407712fdcfa72f7e6a2e6b527a5",
+ "fetched_at": "2026-10-04",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "equivalent",
+ "note": "Re-fetched from the provider by verify-openapi-sources.py; the provider's current document describes the same operations (Jaccard 1.0), but the bytes differ, so the archive is an earlier or reformatted copy."
+}
