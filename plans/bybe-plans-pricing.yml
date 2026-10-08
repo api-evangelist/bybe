@@ -66,3 +66,25 @@ api_access:
 evidence:
   - {url: 'https://bybe.com/pricing', status: 200}
   - {url: 'https://bybe.com/developers', status: 200}
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - free
+  - metered
+  units:
+  - transaction
+  plans:
+  - name: Brand / supplier - pay-as-you-go
+    access: other
+    model: metered
+    model_how: derived
+    units:
+    - transaction
+    periods: []
+  - name: Retailer - free
+    access: other
+    model: free
+    model_how: derived
+    units: []
+    periods: []
