@@ -64,48 +64,128 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-BYBE, Inc. is a promotion platform for the beer, wine and spirits industry. Brands fund cash-back
-rebates in the BYBE dashboard; retailers embed those offers in their own apps, sites and loyalty
-programs; BYBE handles US state-by-state alcohol promotion compliance, redemption validation,
-clearing and consumer payout. Backed by Techstars and Rev1 Ventures, and acquired by
-[Swiftly](https://www.swiftly.com/news/swiftly-acquires-bybe-powering-the-future-of-alcohol-promotions-in-retail)
-in March 2024, BYBE continues to operate under its own brand and domains.
+BYBE, Inc. is a promotion platform for the beer, wine, and spirits industry, connecting alcohol beverage brands, retailers, and consumers through digital cash-back rebates. Brands fund offers in the BYBE dashboard; retailers embed those offers in their own apps, sites and loyalty programs, and BYBE handles US state-by-state alcohol promotion compliance, redemption validation, clearing and consumer payout. BYBE publishes a real OpenAPI 3.0.1 contract for its Retail API at api.bybe.io covering manufacturers, products, offers, clips, consumers, stores and redemption disbursements, with HTTP Basic authentication and a documented SFTP CSV batch alternative for retailers that cannot call the API in real time. Backed by Techstars and Rev1 Ventures, BYBE was acquired by Swiftly in March 2024 and continues to operate under its own brand and domains.
 
-## The API
+**Areas:** Company · Alcohol · Beverages · Promotions · Rebates · Marketing · Retail · Consumer Packaged Goods · Loyalty · Payments · Disbursements · Compliance
 
-BYBE publishes a real OpenAPI 3.0.1 contract for its Retail API — **16 operations across 7 tags**
-(Clips, Consumers, Manufacturers, Offers, Products, Redemptions, Stores).
+## BYBE on APIs.io
 
-| | |
+Everything profiled for BYBE is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/bybe/](https://apis.io/providers/bybe/)** — or go straight to one of the APIs or properties below.
+
+### APIs (7)
+
+- [BYBE Clips API](https://apis.io/apis/bybe/bybe-clips-api/) — A clip represents a consumer's intent to redeem an offer.
+- [BYBE Consumers API](https://apis.io/apis/bybe/bybe-consumers-api/) — A consumer purchases products and clips/redeems offers.
+- [BYBE Manufacturers API](https://apis.io/apis/bybe/bybe-manufacturers-api/) — A manufacturer represents a company or organization that produces alcoholic beverages.
+- [BYBE Offers API](https://apis.io/apis/bybe/bybe-offers-api/) — An offer is created and funded by a manufacturer (brand).
+- [BYBE Products API](https://apis.io/apis/bybe/bybe-products-api/) — A product is produced by a manufacturer and is featured in offers.
+- [BYBE Redemptions API](https://apis.io/apis/bybe/bybe-redemptions-api/) — Redemptions are created to disburse money to a consumer for their specific purchases.
+- [BYBE Stores API](https://apis.io/apis/bybe/bybe-stores-api/) — A store represents a specific retail location of a retailer.
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [bybe](https://apis.io/servers/bybe/bybe/)
+
+#### Agentic access (1)
+
+Which operations an agent can call, which act, and which need a human in the loop.
+
+- [Bybe Agentic Access](https://apis.io/agentic-access/bybe/bybe-agentic-access/)
+
+#### Overlays (1)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Bybe Api Overlay](https://apis.io/overlays/bybe/bybe-api-overlay/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Bybe Authentication](https://apis.io/security/bybe/bybe-authentication/)
+- [Bybe Domain Security](https://apis.io/security/bybe/bybe-domain-security/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Bybe Plans Pricing](https://apis.io/plans/bybe/bybe-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Bybe Rate Limits](https://apis.io/rate-limits/bybe/bybe-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://bybe.com/)
+- [Documentation](https://bybe.com/developers)
+- [Getting started](https://bybe.com/developers)
+- [API reference](https://docs.bybe.io/)
+- [Pricing](https://bybe.com/pricing)
+- [Terms of service](https://bybe.com/terms-and-conditions.html)
+- [Privacy policy](https://bybe.com/privacy-policy.html)
+- [GitHub](https://github.com/BYBE-INC)
+- [Status](https://status.bybe.com/)
+
+## API Evangelist rating
+
+**Kin Score 33.3** — thin · rubric 0.24.0 · scored 2026-10-17
+
+| Facet | Score |
 |---|---|
-| Specification | <https://api.bybe.io/v1/swagger.yaml> |
-| Reference | <https://docs.bybe.io/> (Swagger UI at `api.bybe.io/docs/index.html`) |
-| Base URL | `https://api.bybe.io` — paths carry the `/v1` prefix |
-| Staging | `https://api.bybestaging.io` (docs at `docs.bybestaging.io`) |
-| Auth | HTTP Basic — API key as username, API secret as password, issued at <https://developer.bybe.io/> |
-| Overview | <https://bybe.com/developers> — also documents an SFTP CSV batch alternative |
-| Pricing | <https://bybe.com/pricing> — 25% + $0.25 per successful transaction, capped at $1.75; free for retailers |
-| Status | <https://status.bybe.com/> |
+| Discoverability | 66.1 |
+| Contract quality | 44.6 |
+| Contract governance | 4.5 |
+| Operational transparency | 18.4 |
+| Developer ergonomics | 42.3 |
+| Access clarity | 27.6 |
 
-The contract expresses BYBE's compliance boundary directly: its only component schema is a US state
-enum, used as the `state` filter on offers and stores.
+**Agent readiness 27.2** — agent-aware
 
-### Notes for anyone integrating
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | derived (partial credit) |
+| Error Semantics | derived (partial credit) |
+| OpenAPI Examples | verified |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
 
-- **No `Idempotency-Key` header.** Safe retry comes from the caller-supplied `retailer_identifier`
-  natural key — `POST /v1/clips` returns `303` with a `location` pointing at the existing clip on a
-  duplicate offer/consumer pair, and `409` when the key collides with a different clip.
-- **Errors are not RFC 9457.** The envelope is `{"<resource>": {"errors": {"<field>": ["<message>"]}}}`
-  with no machine-readable code.
-- **No published rate limits** — no `X-RateLimit-*`, no `Retry-After`, no `429` in the contract.
-- The specification declares **no `servers[]` block and no `operationId`s**, so every artifact in
-  this repository cites operations by method + path.
+**Regulatory alignment 15.2** — Payments
 
-### What BYBE does not publish
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/bybe/](https://apis.io/providers/bybe/).
 
-No SDK in any package registry, no CLI, no MCP server, no A2A agent card, no webhooks or AsyncAPI,
-no `/.well-known/` documents, no security.txt, no trust center or named certifications, no dated
-changelog, and no deprecation policy. Each of those absences is recorded with its probe evidence in
-the relevant artifact rather than left blank.
+## How this profile is made
 
-Backed by: techstars — https://bybe.com/
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for BYBE: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/bybe/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
